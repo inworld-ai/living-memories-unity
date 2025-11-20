@@ -1,0 +1,388 @@
+{
+  "schema_version": "1.0.0",
+  "components": [
+    {
+      "id": "qwen_llm_component",
+      "type": "LLMInterface",
+      "creation_config": {
+        "type": "RemoteLLMConfig",
+        "properties": {
+          "provider": "inworld",
+          "model_name": "Qwen/Qwen2-72B-Instruct",
+          "api_key": "{{INWORLD_API_KEY}}",
+          "default_config": {
+            "max_new_tokens": 160,
+            "max_prompt_length": 8000,
+            "temperature": 0.7,
+            "top_p": 0.95,
+            "repetition_penalty": 1.0,
+            "frequency_penalty": 0.0,
+            "presence_penalty": 0.0,
+            "stop_sequences": [
+              "\n\n"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gpt_4_1_llm_component",
+      "type": "LLMInterface",
+      "creation_config": {
+        "type": "RemoteLLMConfig",
+        "properties": {
+          "provider": "openai",
+          "model_name": "gpt-4.1",
+          "api_key": "{{INWORLD_API_KEY}}",
+          "default_config": {
+            "max_new_tokens": 160,
+            "max_prompt_length": 8000,
+            "temperature": 0.7,
+            "top_p": 0.95,
+            "repetition_penalty": 1.0,
+            "frequency_penalty": 0.0,
+            "presence_penalty": 0.0,
+            "stop_sequences": [
+              "\n\n"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gpt_4_1_nano_llm_component",
+      "type": "LLMInterface",
+      "creation_config": {
+        "type": "RemoteLLMConfig",
+        "properties": {
+          "provider": "openai",
+          "model_name": "gpt-4.1-nano",
+          "api_key": "{{INWORLD_API_KEY}}",
+          "default_config": {
+            "max_new_tokens": 160,
+            "max_prompt_length": 8000,
+            "temperature": 0.7,
+            "top_p": 0.95,
+            "repetition_penalty": 1.0,
+            "frequency_penalty": 0.0,
+            "presence_penalty": 0.0,
+            "stop_sequences": [
+              "\n\n"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "routing_llm_component",
+      "type": "LLMRouting",
+      "creation_config": {
+        "type": "LLMRoutingCreationConfig",
+        "properties": {
+          "routing_configs": [
+            {
+              "llm_component_id": "gpt_4_1_nano_llm_component",
+              "priority": 10,
+              "error_cooldown_seconds": 60.0,
+              "min_errors": 5
+            },
+            {
+              "llm_component_id": "qwen_llm_component",
+              "priority": 5,
+              "error_cooldown_seconds": 60.0,
+              "min_errors": 5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "bge_embedder_component",
+      "type": "TextEmbedderInterface",
+      "creation_config": {
+        "type": "RemoteTextEmbedderConfig",
+        "properties": {
+          "provider": "inworld",
+          "model_name": "BAAI/bge-large-en-v1.5",
+          "api_key": "{{INWORLD_API_KEY}}"
+        }
+      }
+    },
+    {
+      "id": "knowledge_component",
+      "type": "KnowledgeInterface",
+      "creation_config": {
+        "type": "RemoteKnowledgeConfig",
+        "properties": {
+          "knowledge_compile_config": {
+            "parsing_config": {
+              "max_chars_per_chunk": 200,
+              "max_chunks_per_document": 100
+            }
+          },
+          "api_key": "{{INWORLD_API_KEY}}"
+        }
+      }
+    },
+    {
+      "id": "stt_component",
+      "type": "STTInterface",
+      "creation_config": {
+        "type": "LocalSTTConfig",
+        "properties": {
+          "model_path": "{{STT_MODEL_PATH}}",
+          "device": {
+            "type": "CUDA",
+            "index": -1,
+            "info": {
+              "name": "",
+              "timestamp": 0,
+              "free_memory_bytes": 0,
+              "total_memory_bytes": 0
+            }
+          },
+          "default_config": {}
+        }
+      }
+    },
+    {
+      "id": "tts_component",
+      "type": "TTSInterface",
+      "creation_config": {
+        "type": "RemoteTTSConfig",
+        "properties": {
+          "api_key": "{{INWORLD_API_KEY}}",
+          "synthesis_config": {
+            "type": "inworld",
+            "config": {
+              "model_id": "inworld-tts-1",
+              "postprocessing": {
+                "sample_rate": 16000
+              },
+              "inference": {
+                "temperature": 0.8,
+                "pitch": 0.0,
+                "speaking_rate": 1.0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "text_edge",
+      "type": "TextEdge"
+    },
+    {
+      "id": "audio_edge",
+      "type": "AudioEdge"
+    },
+    {
+      "id": "safety_edge",
+      "type": "SafetyEdge"
+    }
+  ],
+  "main": {
+    "id": "main_graph",
+      "nodes": [
+        {
+          "id": "FilterInput",
+          "type": "FilterInputNode"
+        },
+        {
+          "id": "Safety",
+          "type": "SafetyCheckerNode",
+          "creation_config": {
+            "type": "SafetyCheckerNodeCreationConfig",
+            "properties": {
+              "embedder_component_id": "bge_embedder_component",
+              "safety_config": {
+                "model_weights_path": "{{SAFETY_MODEL_PATH}}"
+              }
+            }
+          },
+          "execution_config": {
+            "type": "SafetyCheckerNodeExecutionConfig",
+            "properties": {
+            }
+          }
+        },
+        {
+          "id": "STT",
+          "type": "STTNode",
+          "execution_config": {
+            "type": "STTNodeExecutionConfig",
+            "properties": {
+              "stt_component_id": "stt_component"
+            }
+          }
+        },
+        {
+          "id": "AddPlayerSpeech",
+          "type": "AddSpeechEventNode"
+        },
+        {
+          "id": "PlayerFinal",
+          "type": "ConversationEndpointNode"
+        },
+        {
+          "id": "FormatPrompt",
+          "type": "FormatPromptNode"
+        },
+        {
+          "id": "LLM",
+          "type": "LLMChatNode",
+          "execution_config": {
+            "type": "LLMChatNodeExecutionConfig",
+            "properties": {
+              "llm_component_id": "routing_llm_component",
+              "stream": false
+            }
+          }
+        },
+        {
+          "id": "AddCharacterSpeech",
+          "type": "AddSpeechEventNode"
+        },
+        {
+          "id": "SafetyResponse",
+          "type": "RandomCannedTextNode",
+          "execution_config": {
+            "type": "RandomCannedTextNodeExecutionConfig",
+            "properties": {
+              "canned_phrases": [
+                "I'm sorry, but I can't respond to that kind of content.",
+                "That topic makes me uncomfortable. Let's talk about something else.",
+                "I'd prefer not to discuss that. Could we change the subject?"
+              ]
+            }
+          }
+        },      
+        {
+          "id": "CharFinal",
+          "type": "ConversationEndpointNode"
+        },
+        {
+          "id": "TextChunking",
+          "type": "TextChunkingNode"
+        },
+        {
+          "id": "TextProcessor",
+          "type": "TextProcessorNode"
+        },
+        {
+          "id": "TTS",
+          "type": "TTSNode",
+          "execution_config": {
+            "type": "TTSNodeExecutionConfig",
+            "properties": {
+              "tts_component_id": "tts_component",
+              "voice": {
+                "speaker_id": "Dennis"
+              },
+              "synthesis_config": {
+                "type": "inworld",
+                "config": {
+                  "model_id": "inworld-tts-1",
+                  "postprocessing": {
+                    "sample_rate": 16000
+                  },
+                  "inference": {
+                    "temperature": 0.8,
+                    "pitch": 0.0,
+                    "speaking_rate": 1.0
+                  }
+                }
+              },
+              "report_to_client": true
+            }
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from_node": "FilterInput",
+          "to_node": "STT",
+          "condition_id": "audio_edge",
+          "optional": true
+        },
+        {
+          "from_node": "STT",
+          "to_node": "Safety",
+          "optional": true
+        },
+        {
+          "from_node": "FilterInput",
+          "to_node": "Safety",
+          "condition_id": "text_edge",
+          "optional": true
+        },
+        {
+          "from_node": "Safety",
+          "to_node": "AddPlayerSpeech",
+          "condition_id": "safety_edge",
+          "optional": true
+        },
+        {
+          "from_node": "AddPlayerSpeech",
+          "to_node": "FormatPrompt",
+          "optional": true
+        },
+        {
+          "from_node": "AddPlayerSpeech",
+          "to_node": "PlayerFinal",
+          "condition_id": "text_edge",
+          "optional": true
+        },
+        {
+          "from_node": "FormatPrompt",
+          "to_node": "LLM"
+        },
+        {
+          "from_node": "Safety",
+          "to_node": "SafetyResponse",
+          "optional": true
+        },
+        {
+          "from_node": "LLM",
+          "to_node": "AddCharacterSpeech",
+          "optional": true
+        },
+        {
+          "from_node": "AddCharacterSpeech",
+          "to_node": "CharFinal",
+          "condition_id": "text_edge",
+          "optional": true
+        },
+        {
+          "from_node": "AddCharacterSpeech",
+          "to_node": "TextChunking",
+          "condition_id": "text_edge",
+          "optional": true
+        },
+        {
+          "from_node": "SafetyResponse",
+          "to_node": "AddCharacterSpeech",
+          "optional": true
+        },
+        {
+          "from_node": "TextChunking",
+          "to_node": "TextProcessor",
+          "optional": true
+        },
+        {
+          "from_node": "TextProcessor",
+          "to_node": "TTS",
+          "optional": true
+        }
+      ],
+      "start_nodes": [
+        "FilterInput"
+      ],
+      "end_nodes": [
+        "TTS",
+        "CharFinal",
+        "PlayerFinal"
+      ]
+  }
+}

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1a2cfec4f914aa1b6ac1a38735755c1, type: 3}
+  m_Name: Node_07_AddCharacterSpeech
+  m_EditorClassIdentifier: 
+  m_Component: {fileID: 0}
+  m_NodeName: AddCharacterSpeech
+  m_NodeType: 0
+  m_CreationConfigAsset: {fileID: 0}
+  m_InputTypes: []
+  m_OutputType: 
+  m_BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_EditorPosition: {x: 939.3333, y: 407.33334}
+  m_Graph: {fileID: 11400000, guid: 3b8f365fb8b6d9843812b314df30ee23, type: 2}
+  m_ParentNodes:
+  - {fileID: 11400000, guid: 7baef6872ab3e9a4484b599808f4e2e6, type: 2}
+  - {fileID: 11400000, guid: 3d39b896b95cffe488ccf8644324a629, type: 2}
+  m_ChildrenNodes:
+  - {fileID: 11400000, guid: a182b16c61a62364194e35af41bf78d4, type: 2}
+  - {fileID: 11400000, guid: 1ec002c758de5d94994556a326ebb419, type: 2}
+  m_IsPlayer: 0
+  m_SpeakerName: Harry Potter

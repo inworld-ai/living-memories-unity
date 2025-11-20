@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 826846362c864ff088507e25e233339d, type: 3}
+  m_Name: Node_11_RandomCannedText
+  m_EditorClassIdentifier: 
+  m_Component: {fileID: 0}
+  m_NodeName: SafetyResponse
+  m_NodeType: 0
+  m_CreationConfigAsset: {fileID: 0}
+  m_InputTypes: []
+  m_OutputType: 
+  m_BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_EditorPosition: {x: 164, y: 407.33334}
+  m_Graph: {fileID: 11400000, guid: 9dde503cafd98fe49a945745ba01fede, type: 2}
+  m_ParentNodes:
+  - {fileID: 11400000, guid: e223d5693a600c54a828cde28036b428, type: 2}
+  m_ChildrenNodes:
+  - {fileID: 11400000, guid: a182b16c61a62364194e35af41bf78d4, type: 2}
+  - {fileID: 11400000, guid: ae237a5092637534785c7cb93724af69, type: 2}
+  m_ExeConfigData:
+    type: RandomCannedTextNodeExecutionConfig
+    properties:
+      cannedPhrases:
+      - I'm sorry, but I can't respond to that kind of content.
+      - That topic makes me uncomfortable. Let's talk about something else.
+      - I'd prefer not to discuss that. Could we change the subject?

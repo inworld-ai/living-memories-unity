@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0504597a3cd4f66a2b7160687ab0e24, type: 3}
+  m_Name: InworldRuntime
+  m_EditorClassIdentifier: 
+  m_TelemetryConfig:
+    serviceName: UnityFramework
+    serviceVersion: 0.2.0
+    endPoint: knivesout.dev.inworld.ai:443
+    exporterType: 1
+    logLevel: 1
+    samplingRate: 0.1
+    sinkAbslLogs: 1
+    telemetryKey: SmVSbnZpbDN2bmExdExlQVpNZGxSbHVGWmNEUE9IRUU6Y2JtSGp2dDI1TU1vdjdyVDRnYWlHdmVYcE5ySnB4NkdUZHV3dXpQOTRoZk5rRm5CdDdJekRtU0h6U0dWUkpqcQ==
+  m_APIKey: OHVmeUM3ZFUzUXZrSDhPNm5sdmR6VHc3eFp4SDczeTY6WG1ZYWJ6VmlMdkFmSGl6R2FZRHN6REhzRjd6UjVlc2M5SUVKcExIWk5id2lTeEE0QngzSUNhVDBZQVM3a2NFaQ==
+  m_LLMModelPath: llm/Meta-Llama-3.1-8B-Instruct-Q8_0.gguf
+  m_TextEmbedderPath: embedders/bge-large-en-v1.5_fp32.gguf
+  m_SafetyWeightPath: safety/model_weights.json
+  m_STTModelPath: stt/ggml-base.en.bin
+  m_VADModelPath: vad/silero/silero_vad.onnx
+  m_TTSModelPath: tts/model.onnx
+  m_TTSPromptPath: tts/prompt
+  m_TimeoutSpan: 30
+  m_InworldIcon: {fileID: 2800000, guid: 7b91e150932621d4f92bc275c69eaf94, type: 3}
+  m_DefaultPlayerIcon: {fileID: 2800000, guid: 2f2ad2a87cf90074f9f8b67461eb11e5, type: 3}
+  m_PlayerName: Player

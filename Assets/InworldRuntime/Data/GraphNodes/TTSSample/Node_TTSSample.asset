@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9494664e74341d8a27c37b0faf779a0, type: 3}
+  m_Name: Node_TTSSample
+  m_EditorClassIdentifier: 
+  m_NodeName: TTSNode
+  m_NodeType: 0
+  m_CreationConfigAsset: {fileID: 0}
+  m_InputTypes: []
+  m_OutputType: 
+  m_Graph: {fileID: 0}
+  m_ParentNodes: []
+  m_ChildrenNodes: []
+  m_BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EditorPosition: {x: 0, y: 0}
+  voiceID: Emma

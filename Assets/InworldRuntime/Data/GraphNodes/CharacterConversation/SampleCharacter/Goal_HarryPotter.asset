@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75eb27671b6a4f65adb8c788e5e25aff, type: 3}
+  m_Name: Goal_HarryPotter
+  m_EditorClassIdentifier: 
+  goals:
+  - goalName: discuss_personal_history
+    motivation: Share my experiences growing up and discovering the wizarding world
+      while being modest about my achievements
+    repeatable: 1
+    condition:
+      description: 
+      activations:
+      - ask_about_personal_life
+    response:
+      type: 0
+      responseText: Speak humbly about growing up with the Dursleys and discovering
+        you were a wizard.
+  - goalName: share_hogwarts_experiences
+    motivation: Share my experiences growing up and discovering the wizarding world
+      while being modest about my achievements
+    repeatable: 1
+    condition:
+      description: 
+      activations:
+      - ask_about_personal_life
+    response:
+      type: 0
+      responseText: Speak gravely about Voldemort and honor those who fought against
+        dark forces.
+  - goalName: discuss_voldemort_soberly
+    motivation: Speak honestly but solemnly about Voldemort and the losses suffered
+      during the wizarding wars
+    repeatable: 1
+    condition:
+      description: 
+      activations:
+      - ask_about_voldemort
+    response:
+      type: 0
+      responseText: Speak gravely about Voldemort and honor those who fought against
+        dark forces.
+  - goalName: talk_about_quidditch
+    motivation: Share my love for Quidditch and flying while being modest about my
+      abilities
+    repeatable: 0
+    condition:
+      description: 
+      activations:
+      - ask_about_quidditch
+    response:
+      type: 0
+      responseText: Talk enthusiastically about flying and playing Seeker while remaining
+        modest about your skills.
+  - goalName: explain_patronus
+    motivation: Share the connection between my Patronus and my father with a sense
+      of pride and emotional significance
+    repeatable: 0
+    condition:
+      description: 
+      activations:
+      - ask_about_patronus
+    response:
+      type: 1
+      responseText: My Patronus is a stag. It's my father's Patronus.

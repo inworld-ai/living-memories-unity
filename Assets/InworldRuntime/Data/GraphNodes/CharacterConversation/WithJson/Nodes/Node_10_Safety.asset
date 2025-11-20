@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d37f36cd96e4825912fc6635d3b8a71, type: 3}
+  m_Name: Node_10_Safety
+  m_EditorClassIdentifier: 
+  m_Component: {fileID: 11400000, guid: bdaded8148fc93e47bd598f390923546, type: 2}
+  m_NodeName: Safety
+  m_NodeType: 0
+  m_CreationConfigAsset: {fileID: 0}
+  m_InputTypes: []
+  m_OutputType: 
+  m_BackgroundColor: {r: 0.8, g: 0.25, b: 0.25, a: 1}
+  m_EditorPosition: {x: -76.666664, y: 407.33334}
+  m_Graph: {fileID: 11400000, guid: 9dde503cafd98fe49a945745ba01fede, type: 2}
+  m_ParentNodes:
+  - {fileID: 11400000, guid: f59f9b3e207503e43bc317e265b508d4, type: 2}
+  - {fileID: 11400000, guid: f62e089a8691c6b4a9c7f173faf8038a, type: 2}
+  m_ChildrenNodes:
+  - {fileID: 11400000, guid: 27277115d50f39345824a1a2b860903c, type: 2}
+  - {fileID: 11400000, guid: 3d39b896b95cffe488ccf8644324a629, type: 2}
+  m_CreationConfigData:
+    type: SafetyCheckerNodeCreationConfig
+    properties:
+      embedderComponentID: bge_embedder_component
+      safetyConfig:
+        modelWeightsPath: '{{SAFETY_MODEL_PATH}}'
+  m_ExeConfigData:
+    type: SafetyCheckerNodeExecutionConfig
+  m_SafetyData: []

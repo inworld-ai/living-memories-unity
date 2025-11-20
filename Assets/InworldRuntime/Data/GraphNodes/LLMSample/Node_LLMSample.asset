@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 494fb8075b6547ecbe0ac1a0489ebb9a, type: 3}
+  m_Name: Node_LLMSample
+  m_EditorClassIdentifier: 
+  m_NodeName: LLm123
+  m_NodeType: 0
+  m_CreationConfigAsset: {fileID: 0}
+  m_InputTypes: []
+  m_OutputType: 
+  m_BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EditorPosition: {x: 0, y: 0}
+  m_Graph: {fileID: 11400000, guid: 3cd8136a16b2fa84c9839bab3a121886, type: 2}
+  m_ParentNodes: []
+  m_ChildrenNodes: []
+  m_Stream: 0
+  m_MaxTokens: 100
+  m_Temperature: 0.7
+  m_TopP: 0.9

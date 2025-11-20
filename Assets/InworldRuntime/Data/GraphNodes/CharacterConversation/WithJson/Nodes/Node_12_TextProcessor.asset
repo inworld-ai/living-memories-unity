@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b588bc8cf584f5294583fa2c3ea683f, type: 3}
+  m_Name: Node_12_TextProcessor
+  m_EditorClassIdentifier: 
+  m_Component: {fileID: 0}
+  m_NodeName: TextProcessor
+  m_NodeType: 0
+  m_CreationConfigAsset: {fileID: 0}
+  m_InputTypes: []
+  m_OutputType: 
+  m_BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_EditorPosition: {x: 1560, y: 407.33334}
+  m_Graph: {fileID: 11400000, guid: 9dde503cafd98fe49a945745ba01fede, type: 2}
+  m_ParentNodes:
+  - {fileID: 11400000, guid: a182b16c61a62364194e35af41bf78d4, type: 2}
+  m_ChildrenNodes:
+  - {fileID: 11400000, guid: 7735b6f4d5e64564aa05c03f16363b1b, type: 2}
+  needRemoveTextInBrackets: 1
+  needRemoveSubstring: 1
+  needRemovePlayerName: 1
+  needRemoveSentenceStream: 1
+  needRemoveEmojis: 1
+  substringsToRemove:
+  - 'Player:'
+  - 'Character:'

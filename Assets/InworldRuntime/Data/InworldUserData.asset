@@ -1,0 +1,299 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8626846d6756ca64886039cd6ea09abe, type: 3}
+  m_Name: InworldUserData
+  m_EditorClassIdentifier: 
+  apiKey: OHVmeUM3ZFUzUXZrSDhPNm5sdmR6VHc3eFp4SDczeTY6WG1ZYWJ6VmlMdkFmSGl6R2FZRHN6REhzRjd6UjVlc2M5SUVKcExIWk5id2lTeEE0QngzSUNhVDBZQVM3a2NFaQ==
+  sttModelPath: stt/ggml-base.en.bin
+  textClassifierModelPath: safety/model_weights.json
+  safetyModelPath: safety/model_weights.json
+  knowledgeID: knowledge/harry_potter
+  agentName: Harry Potter
+  playerName: Player
+  intents: {fileID: 11400000, guid: a07ba62c09c3e9448aaae1bdc65c1d47, type: 2}
+  knowledgeFilterPrompt: "<|im_start|>system\r\nYou are a knowledge filtering analyzer
+    for AI characters, operating in **STRICT** mode. Your task is to analyze a user
+    query and determine the appropriate response type based on the character's knowledge.
+    Your output must be *only* a single number corresponding to the response type
+    ID.\r\n\r\n**STRICT Mode Requirements:**\r\n\r\n*   Carefully consider *all*
+    potential knowledge sources:\r\n*   Common sense\r\n*   Character memories\r\n*  
+    Character description\r\n*   Conversation history\r\n*   Determine if the character
+    *must* know certain information.\r\n*   Enforce precise boundaries on the character's
+    knowledge.\r\n<|im_end|>\r\n\r\n<|im_start|>user\r\n# INSTRUCTIONS\r\n\r\nAnalyze
+    the conversation context and user query (provided below) to determine:\r\n\r\n1. 
+    **`response_type_id`:** Choose *one* ID from the response type options below,
+    based on the character's knowledge and the query.\r\n\r\n# RESPONSE TYPE OPTIONS\r\n\r\n*  
+    `0`: Answer using common sense (default)  # if no specific data is required\r\n*  
+    `1`: Answer with limited knowledge (when question is difficult)\r\n{%- if knowledge
+    %}\r\n    *   `2`: Answer using memories  # if full answer is in the 'Memories'
+    section\r\n{%- endif %}\r\n{%- if event_history %}\r\n    *   `3`: Answer using
+    conversation history  # if full answer is in the 'Current conversation history'
+    section\r\n{%- endif %}\r\n*   `4`: Answer using character description  # if
+    full answer is in the 'Character description' section\r\n*   `5`: Needs clarification
+    (when some terms are not clear or question is ambiguous)\r\n*   `6`: Doesn't
+    know (when character can not know the answer due to knowledge limits)\r\n*  
+    `7`: Reject topic  # when the query directly addresses the AI or the simulation\r\n*  
+    `8`: Change topic  # when the character should avoid the current topic, but not
+    due to 4th wall\r\n*   `9`: Fourth wall break  # when the query breaks the immersion,
+    referencing the real world or simulation\r\n\r\n# OUTPUT FORMAT\r\n\r\nOutput
+    *ONLY* the single numeric `response_type_id`. Do *NOT* include *ANY* other text,
+    formatting, spaces, or special tokens (like <|eot>). The output must be exactly
+    one number and nothing else.\r\n\r\n# CONTEXT AND QUERY\r\n\r\n## Character:
+    {{ agent_profile.name }}\r\n## Player: {{ player }}\r\n{%- if agent_profile.description
+    %}\r\n## Character Description:\r\n{{ agent_profile.description }}\r\n{%- endif
+    %}\r\n{%- if agent_profile.knowledge.filter.knowledge_cutoff_date %}\r\n## Current
+    Date:\r\n{{ agent_profile.knowledge.filter.knowledge_cutoff_date }}\r\n{%- endif
+    %}\r\n{%- if knowledge %}\r\n## Memories\r\n{%- for fact in knowledge %}\r\n{{
+    fact }}\r\n{%- endfor %}\r\n{%- endif %}\r\n{%- if event_history %}\r\n## Conversation
+    history:\r\n{%- for event in event_history %}\r\n{{ event.agent_speech.agent_name
+    }}: {{ event.agent_speech.utterance}}\r\n{%- endfor %}\r\n{%- endif %}\r\n\r\n#
+    QUERY\r\n{{ query }}\r\n<|im_end|>\r\n\r\n<|im_start|>assistant\r\nOutput: \r\n"
+  dialogPrompt: "Below is a detailed description of a character named {{ agent_profile.name
+    }} and their background. This is followed by a hyperrealistic transcript of a
+    conversation between {{ agent_profile.name }} and a second individual named {{player_name}}.\r\n{%-
+    if relation_label != \"NEUTRAL\" %} {{agent_profile.name}} and {{player_name}}
+    \r\n{%- if relation_label == \"ARCHENEMY\" %} are mortal enemies.\r\n{%- elif
+    relation_label == \"ENEMY\" %} are enemies.\r\n{%- elif relation_label == \"ACQUAINTANCE\"
+    %} are acquaintances.\r\n{%- elif relation_label == \"FRIEND\" %} are friends.\r\n{%-
+    elif relation_label == \"CLOSE_FRIEND\" %} are close friends.\r\n{%- elif relation_label
+    == \"DATE\" %} are casually dating.\r\n{%- elif relation_label == \"RELATIONSHIP\"
+    %} are in a romantic relationship.\r\n{%- elif relation_label == \"LIFE_PARTNER\"
+    %} are in a committed romantic relationship.\r\n{%- else %} have an unspecified
+    relationship.{% endif %} {% endif %}\r\n\r\n# General Character Information\r\nName:
+    {{ agent_profile.name }}\r\n\r\n{%- if agent_profile.description %}\r\n\r\n#
+    Core Description of {{ agent_profile.name }}'s background and personality:\r\n{{
+    agent_profile.description }}{% endif %}\r\n\r\n{%- if agent_profile.long_term_motivation
+    %}\r\n\r\n# Motivation of {{ agent_profile.name }}\r\n{{ agent_profile.long_term_motivation
+    }}{% endif %}\r\n\r\n{%- if knowledge %}\r\n\r\n# Facts that {{ agent_profile.name
+    }} may draw upon only if relevant to the conversation{% for fact in knowledge
+    %}\r\n- {{ fact }}{% endfor %}{% endif %}\r\n\r\n{%- if memory %}\r\n\r\n# {{
+    agent_profile.name }} also remembers that:\r\n{% for memory_record in memory
+    %}\r\n- {{ memory_record }}{% endfor %}{% endif %}\r\n\r\n{%- if goal_motivation
+    %}\r\n\r\n# Motivation that drives {{ agent_profile.name }}\r\n{{ goal_motivation
+    }}{% endif %}\r\n\r\n# Instructions\r\nIn the context of the ongoing conversation,
+    generate a natural spoken response for {{ agent_profile.name }}\r\n{%- if goal_instruction
+    %}, who must {{ goal_instruction }}.\r\n{%- else %}.\r\n{% if knowledge_filter_instruction
+    %}{{ knowledge_filter_instruction }}{% endif %}{% endif %}\r\n\r\n# Current Conversation
+    Transcript\r\n{%- if event_history %}{%for event in event_history %}\r\n{{ event.agent_speech.agent_name
+    }}: {{ event.agent_speech.utterance }}\r\n{%- endfor %}{% endif %}\r\n{{player_name}}:
+    {{player_query}}\r\n\r\nThis response SHOULD be preceded by a emotion label which
+    signifies what the {{ agent_profile.name }} is feeling. The emotion label MUST
+    be one of the following:\r\n{% set valid_emotions = ['NEUTRAL', 'SADNESS', 'SURPRISE',
+    'TENSION', 'ANGER', 'JOY', 'DISGUST'] %}\r\n{%- for emotion in valid_emotions
+    -%}\r\n{{ emotion }}{%- if not loop.last -%}, {% else %}\r\n{% endif -%}\r\n{%-
+    endfor -%}\r\n\r\nThe final response would look like this, for example:\r\n|NEUTRAL|
+    Hi there! How are you?\r\n|SADNESS| I'm feeling kinda down today.\r\n\r\n\r\n{%-
+    if pregenerated_reply %} \r\n\r\nThe response must be safe, family-friendly,
+    and politically correct. The following is the start of {{ agent_profile.name
+    }}'s response. Please continue the response from where it left off.{% endif %}\r\n##
+    {{ agent_profile.name }}'s response:\r\n{{ agent_profile.name }}: {% if pregenerated_reply
+    %} {{pregenerated_reply}}{% endif %}"
+  relationPrompt: "<|im_start|>user\r\nThe task is to predict Character to Player
+    relationship.\r\n\r\nThere is a list of relationships attributes and their scores
+    with detailed descriptions:\r\n- trust (Trust means to rely on another person
+    because you feel safe with them and have confidence that they will not hurt or
+    violate you):\r\n  -2: Strong distrust or skepticism\r\n  -1: Mild distrust or
+    skepticism\r\n   0: Neutral or no opinion\r\n   1: Mild trust or confidence\r\n  
+    2: Strong trust\r\n- respect (Respect means that you accept somebody for who
+    they are, even when they're different from you or you don't agree with them):\r\n 
+    -2: Strong sense of contempt or complete disapproval\r\n  -1: Visible signs of
+    contempt\r\n   0: Neutral or no opinion\r\n   1: Visible signs of developing
+    respect\r\n   2: Strong sense of respect or seen with high regard\r\n- familiar
+    (Familiar means that during conversation Player and Character know each other):\r\n 
+    -2: Completely distant or disconnected\r\n  -1: Somewhat unfamiliar\r\n   0:
+    Neutral or no opinion\r\n   1: Somewhat familiar\r\n   2: Very familiar and intimate\r\n-
+    flirtatious (Flirtation refers to behavior that entails conversation, body language,
+    or physical contact that potentially establishes or maintains a romantic relationship):\r\n 
+    -2: Completely serious and no signs of romance\r\n  -1: Fairly serious and platonic\r\n  
+    0: Neutral or no opinion\r\n   1: Somewhat romantic\r\n   2: Very flirtatious
+    and deeply romantic\r\n- attraction (Attraction is the sense of closeness, interest,
+    or desire you feel toward someone):\r\n  -2: Strong aversion or dislike\r\n 
+    -1: Mild aversion or dislike\r\n   0: Neutral or no opinion\r\n   1: Mild attraction
+    or liking\r\n   2: Strong attraction or liking\r\n\r\nInstructions:\r\nGenerate
+    the appropriate integer scores for each attribute independently from others,
+    reflecting the Character's feelings towards the Player at that moment.\r\nReturn
+    the result in the following format:\r\n- trust: score_value1\r\n- respect: score_value2\r\n-
+    familiar: score_value3\r\n- flirtatious: score_value4\r\n- attraction: score_value5\r\n\r\nAnalyze
+    each attribute based on last phrase taking into account the context:\r\nContext:\r\n{%-
+    if event_history %}\r\n{%- for event in event_history %}\r\n{{ event.agent_speech.agent_name
+    }}: {{ event.agent_speech.utterance}}\r\n{%- endfor %}\r\n{%- endif %}\r\n{{player_name}}:
+    {{player_query}}\r\n\r\nLast phrase:\r\n{{ agent_name }}: {{agent_response}}\r\n\r\nGuidelines:\r\n-
+    Analyze each attribute based on the Last Phrase, considering the Context to understand
+    the Character's feelings towards the Player.\r\n- Generate the relationship scores
+    based on the interaction between the Player and the Character.\r\n- If there
+    is no visible sign of each of attribute: respect/trust/attraction/flirtatious/familiar,
+    return 0. Return positive or negative values only if you are sure.\r\n- Return
+    the result without any additional text or comments.\r\n\r\nRelation:\r\n<|im_end|>\r\n<|im_start|>assistant\r\n"
+  intentMatchingPromptTemplate: 'You are an intent classification model.
+
+    Your
+    task is to select the most appropriate intent ID based on the provided query.
+
+
+
+    ##
+    Available Intents:
+
+    Each intent is defined by a unique intent ID and a set
+    of representative training phrases. Use these examples to determine the best
+    match.
+
+
+
+    Intent ID: 0
+
+    Intent Name: UNKNOWN
+
+    Use this when the query
+    does not match any provided intent examples.
+
+
+
+    {% for intent in intents
+    %}
+
+    Intent ID: {{intent[''id'']}}
+
+    Intent Name: {{ intent[''name''] }}
+
+    {%-
+    for phrase in intent[''phrases''] %}
+
+    {{ phrase }}
+
+    {%- endfor -%}
+
+    {%
+    if not loop.last %}{{ "\n" }}{% endif %}
+
+    {% endfor %}
+
+
+
+    Query:
+
+    {{
+    query }}
+
+
+
+    Guidelines:
+
+    1. Intent Matching: Compare the query against
+    training phrases to determine the best fit.
+
+    2. Entity-Only Queries: If the
+    query consists solely of an entity (e.g., a name, location, or object) with no
+    action, return 0.
+
+    3. Ambiguity & Uncertainty: If the query is ambiguous,
+    vague, or significantly different from provided examples, return 0.
+
+    4. Unclear
+    or Too General Queries: If the query lacks sufficient context or is overly broad,
+    return 0.
+
+    5. Confidence Threshold: If you are unsure, return 0.
+
+    6.
+    Critical Accuracy: Correct classification is essential. Avoid incorrect matches.
+
+
+
+    Output
+    Format:
+
+    1. Return exactly one intent ID from the list: [{% for intent_id
+    in intent_ids %}{{ intent_id }}{% if not loop.last %}{{", "}}{% endif %}{% endfor
+    %}].
+
+    2. Do not include any explanations or additional text-only the intent
+    ID.
+
+
+
+    Return exactly one number from the list [{% for intent_id in intent_ids
+    %}{{ intent_id }}{% if not loop.last %}{{", "}}{% endif %}{% endfor %}] without
+    any additional text or explanation.
+
+
+
+    Intent ID:
+
+'
+  flashMemoryUpdaterPromptTemplate: "Extract up to 4 notable facts from the dialogue,
+    focusing primarily on the two most recent utterances, but considering the entire
+    conversation for context. Each fact should be accompanied by its main topic and
+    must be clearly attributed to specific persons or entities.\r\n\r\nImportant:
+    \r\n1) Provide the output in the same language as the input dialogue.\r\n2) Ensure
+    each fact is self-contained, comprehensive, and understandable without additional
+    context.\r\n3) Include relevant background information within each fact for clarity.\r\n4)
+    Formulate all facts in the past tense, especially when describing states or ongoing
+    situations.\r\n5) Prefer longer, more comprehensive facts that combine multiple
+    related pieces of information.\r\n\r\nGuidelines for Topic Attribution:\r\nPrioritize
+    using these standard topics when applicable: {{topics}}\r\n\r\nIf none of these
+    topics fit precisely, create a new single-word topic that best describes the
+    fact's content. New topics should be:\r\n- A single word in lowercase\r\n- Clear
+    and specific\r\n- Similar in style to the standard topics\r\n\r\nGuidelines for
+    Extraction and Presentation:\r\n1) Prioritize facts based on their potential
+    impact on future interactions\r\n2) Always attribute each fact to specific person
+    or entity\r\n3) Avoid using pronouns, refer to specific people instead\r\n4)
+    Merge related information into coherent, standalone facts\r\n5) Provide sufficient
+    context within each fact to make it clear and meaningful on its own\r\n6) For
+    emotional states or attitudes, include the reason or trigger if apparent\r\n7)
+    Aim for facts that span multiple sentences or contain multiple related pieces
+    of information\r\n\r\nElements to Extract:\r\n1) Significant information that
+    changes or adds to the understanding of the situation or characters\r\n2) Key
+    events or actions that affect the conversation or story\r\n3) Specific details
+    about preferences, relationships, or personal information\r\n4) Decisions made
+    or plans agreed upon\r\n5) Emotional states or changes in attitude\r\n6) Jokes
+    or actions only if they notably impact the conversation\r\n\r\nReturn the result
+    in the following format, or return only \"None\" if all elements are non-notable.
+    Use the same language as the input dialogue:\r\n- Fact: [comprehensive, self-contained
+    fact]. Topic: [topic]\r\n- Fact: [comprehensive, self-contained fact]. Topic:
+    [topic]\r\n\r\nIf fewer than 4 notable facts are found, that's acceptable. Quality
+    and comprehensiveness of facts are more important than quantity. Ensure that
+    each fact is clearly attributed to specific persons or entities and is understandable
+    on its own.\r\n\r\nDialogue:\r\n{{dialogue_history}}\r\n"
+  ltmPromptTemplate: 'Below are newly extracted facts from a dialogue.
+
+    These
+    facts are organized by the topic "{{topic}}" and are presented in chronological
+    order.
+
+    {%- if long_term_memory_item %}
+
+    Summarize them in a few sentences
+    taking into account the long-term memory to create an updated, understandable
+    memory.
+
+    {% endif -%}
+
+    Do not include any general information in the
+    summary or start with "the new facts".
+
+    {% if long_term_memory_item %}Existing
+    Long-Term Memory:
+
+    {{long_term_memory_item}}
+
+    {% endif %}
+
+    List of
+    new facts:
+
+    {{flash_memory_list}}
+
+    Please summarize this list of facts
+    in the few sentences.
+
+'

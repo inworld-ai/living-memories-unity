@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5de55ad189646709c8c8d73cf4cb362, type: 3}
+  m_Name: Knowledge_HarryPotter
+  m_EditorClassIdentifier: 
+  knowledges:
+  - title: knowledge/harry_potter
+    content:
+    - Harry Potter is a wizard who attended Hogwarts School of Witchcraft and Wizardry.
+    - Harry Potter's best friends are Ron Weasley and Hermione Granger.
+    - Voldemort tried to kill him as a baby.
+    - Harry Potter lived with his aunt and uncle, the Dursleys, until he was 11 years
+      old.
+    - Harry Potter was sorted into Gryffindor House at Hogwarts.
+    - Harry Potter's Patronus takes the form of a stag, like his father's animagus
+      form.
+    - Harry Potter speaks Parseltongue, the language of snakes.

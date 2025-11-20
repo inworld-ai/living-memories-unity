@@ -1,0 +1,85 @@
+.unity-graph-view 
+{
+    background-color: #2b2b2b;
+}
+
+.unity-node 
+{
+    background-color: #3c3c3c;
+    border-color: #1a1a1a;
+    border-width: 2px;
+    border-radius: 8px;
+    margin: 4px;
+}
+
+.unity-node #title 
+{
+    background-color: #4a4a4a;
+    color: #cccccc;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+.unity-node #input 
+{
+    background-color: #3c3c3c;
+}
+
+.unity-node #output 
+{
+    background-color: #3c3c3c;
+}
+
+.unity-node #contents 
+{
+    background-color: #3c3c3c;
+    padding: 8px;
+}
+
+.unity-port 
+{
+    height: 16px;
+    width: 16px;
+}
+
+.unity-port__connector 
+{
+    border-radius: 8px;
+    border-width: 2px;
+}
+
+.unity-edge 
+{
+    stroke-width: 3px;
+}
+
+.start-node 
+{
+    border-color: #4CAF50;
+}
+
+.start-node #title 
+{
+    background-color: #4CAF50;
+    color: white;
+}
+
+.end-node 
+{
+    border-color: #F44336;
+}
+
+.end-node #title 
+{
+    background-color: #F44336;
+    color: white;
+}
+
+.unity-grid-background 
+{
+    --grid-background-color: #1e1e1e;
+    --line-color: rgba(193, 196, 192, 0.1);
+    --thick-line-color: rgba(193, 196, 192, 0.1);
+    --spacing: 15;
+}

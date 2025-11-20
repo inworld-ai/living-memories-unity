@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac749288f0c4cebbb3c84bd31595749, type: 3}
+  m_Name: Graph_CharacterConversation
+  m_EditorClassIdentifier: 
+  m_PlayerName: Player
+  m_GraphName: CharacterInteractionGraph
+  m_GraphJson: {fileID: 4900000, guid: 4e69d1d869a4f8c4197d8b08f23dba52, type: 3}
+  m_UserData: {fileID: 11400000, guid: 1f6316fe4793e3e4792eafc1f6d31cd6, type: 2}
+  m_Components: []
+  m_Nodes:
+  - {fileID: 11400000, guid: f59f9b3e207503e43bc317e265b508d4, type: 2}
+  - {fileID: 11400000, guid: e223d5693a600c54a828cde28036b428, type: 2}
+  - {fileID: 11400000, guid: f62e089a8691c6b4a9c7f173faf8038a, type: 2}
+  - {fileID: 11400000, guid: 27277115d50f39345824a1a2b860903c, type: 2}
+  - {fileID: 11400000, guid: 3d39b896b95cffe488ccf8644324a629, type: 2}
+  - {fileID: 11400000, guid: 272e04ff76895c34fa20541408f3a9ad, type: 2}
+  - {fileID: 11400000, guid: 492443ae5238b7f439852addde1e3386, type: 2}
+  - {fileID: 11400000, guid: 7baef6872ab3e9a4484b599808f4e2e6, type: 2}
+  - {fileID: 11400000, guid: ae237a5092637534785c7cb93724af69, type: 2}
+  - {fileID: 11400000, guid: 1ec002c758de5d94994556a326ebb419, type: 2}
+  - {fileID: 11400000, guid: a182b16c61a62364194e35af41bf78d4, type: 2}
+  - {fileID: 11400000, guid: 55d968a89d4531241b6426ca49823107, type: 2}
+  - {fileID: 11400000, guid: 7735b6f4d5e64564aa05c03f16363b1b, type: 2}
+  m_StartNode: {fileID: 11400000, guid: f59f9b3e207503e43bc317e265b508d4, type: 2}
+  m_EndNode: {fileID: 0}
+  m_EndNodes:
+  - {fileID: 11400000, guid: 7735b6f4d5e64564aa05c03f16363b1b, type: 2}
+  - {fileID: 11400000, guid: 1ec002c758de5d94994556a326ebb419, type: 2}
+  - {fileID: 11400000, guid: 492443ae5238b7f439852addde1e3386, type: 2}
+  m_Edges:
+  - {fileID: 11400000, guid: 78adc5dd6cc008849ad06dc804c4571c, type: 2}
+  - {fileID: 11400000, guid: 5b46ab854c803d04aa0bad6430f88634, type: 2}
+  - {fileID: 11400000, guid: 4614a28dfa6b19f4dbb6d95a1ca95104, type: 2}
+  - {fileID: 11400000, guid: 2ded1534984cea546a4aac84f60e7418, type: 2}
+  - {fileID: 11400000, guid: 76bd1b78fd5bc8b4fb616acc0125d673, type: 2}
+  - {fileID: 11400000, guid: 9bb6aa663c43c2949a503d4f2a9767ee, type: 2}
+  - {fileID: 11400000, guid: 8f1b74cd363b2e944a3740cecb5be367, type: 2}
+  - {fileID: 11400000, guid: fffb07765b771414b9d5ee034c6ca55d, type: 2}
+  - {fileID: 11400000, guid: ae48afb4ca68f8c47bade7e93c93de88, type: 2}
+  - {fileID: 11400000, guid: ef65789df06db654b98c7e493d9f1b01, type: 2}
+  - {fileID: 11400000, guid: 6efdc1003dbc6174883705a9e969f854, type: 2}
+  - {fileID: 11400000, guid: 162f1643f375a67478034a7f21982faa, type: 2}
+  - {fileID: 11400000, guid: 89980e2b690f156428d8b7c891958d72, type: 2}
+  - {fileID: 11400000, guid: 92577248511994c40ade5cd588ac95a4, type: 2}
+  characters:
+  - {fileID: 11400000, guid: ce30ab7c5aa5c894b8ef4438d0fd781f, type: 2}
+  voiceID: Alex
+  prompt: {fileID: 11400000, guid: 36124fa52cb44f04ba615185707436e9, type: 2}

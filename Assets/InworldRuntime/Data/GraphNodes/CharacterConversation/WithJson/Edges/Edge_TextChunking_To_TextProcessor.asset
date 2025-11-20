@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c0ff2a0ac104bab9b324a8026e75a2f, type: 3}
+  m_Name: Edge_TextChunking_To_TextProcessor
+  m_EditorClassIdentifier: 
+  m_Graph: {fileID: 0}
+  m_Component: {fileID: 0}
+  m_StartNode: {fileID: 11400000, guid: a66687a97642d5d45a60b74fc11ca7e8, type: 2}
+  m_EndNode: {fileID: 11400000, guid: ff4ae14ddfa021d45a8804e94921cee4, type: 2}
+  m_IsRequired: 0
+  m_IsLoop: 0
+  m_IsMultiThread: 0
+  m_ShowTitle: 0
+  m_AllowedPassByDefault: 1
+  m_EdgeTitle: 
+  m_EdgeColor: {r: 1, g: 1, b: 1, a: 1}

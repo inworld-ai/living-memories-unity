@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5de55ad189646709c8c8d73cf4cb362, type: 3}
+  m_Name: KnowledgeData
+  m_EditorClassIdentifier: 
+  knowledges:
+  - title: knowledge/inworld.ai
+    content:
+    - "Inworld is a fully integrated platform for AI characters that goes beyond
+      large language models (LLMs) \u2013 by adding configurable safety, knowledge,
+      memory, narrative controls, multimodality, and more."
+    - 'Inworld uses advanced AI to build generative characters whose personalities,
+      thoughts, memories, and behaviors are designed to mimic the deeply social nature
+      of human interaction. '
+    - 'The Inworld platform lets you create characters with personality and contextual
+      awareness to keep them in-world or on-brand. Integrations make it easy for
+      developers to deploy characters into immersive experiences, while scale and
+      performance are optimized for real-time experiences. '
+    - The CEO of Inworld AI is Kylan Gibbs
+    - The CTO of Inworld AI is Michael Ermolenko
+    - Inworld AI was founded in July, 2021
+    - The Inworld AI team formerly built Google Dialogflow.

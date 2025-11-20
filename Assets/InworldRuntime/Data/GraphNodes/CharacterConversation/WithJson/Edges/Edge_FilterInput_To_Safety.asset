@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30292e7009674472844b6714129e1bec, type: 3}
+  m_Name: Edge_FilterInput_To_Safety
+  m_EditorClassIdentifier: 
+  m_Graph: {fileID: 0}
+  m_Component: {fileID: 11400000, guid: d34ecc0b24af5aa429ea2a2247a36c29, type: 2}
+  m_StartNode: {fileID: 11400000, guid: 99fef31d7f901db4f95f29ad10b250c6, type: 2}
+  m_EndNode: {fileID: 11400000, guid: 87f0f45a3ff38374287535d5a5aee57d, type: 2}
+  m_IsRequired: 0
+  m_IsLoop: 0
+  m_IsMultiThread: 0
+  m_ShowTitle: 0
+  m_AllowedPassByDefault: 1
+  m_EdgeTitle: 
+  m_EdgeColor: {r: 1, g: 1, b: 1, a: 1}

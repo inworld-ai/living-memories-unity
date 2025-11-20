@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baa2e8744eef45569bf0d56d07c8470c, type: 3}
+  m_Name: Graph_EdgeSample
+  m_EditorClassIdentifier: 
+  m_PlayerName: Player
+  m_GraphName: New Graph
+  m_Nodes:
+  - {fileID: 11400000, guid: c8a39cf4a0ff45c4ba97417de44f2857, type: 2}
+  - {fileID: 11400000, guid: 45e8edb35d9fe364baaa3e92c22d1d0b, type: 2}
+  m_StartNode: {fileID: 11400000, guid: c8a39cf4a0ff45c4ba97417de44f2857, type: 2}
+  m_EndNode: {fileID: 11400000, guid: 45e8edb35d9fe364baaa3e92c22d1d0b, type: 2}
+  m_Edges:
+  - {fileID: 11400000, guid: b08c2d03517b6ba4fb8e55c39987d1d9, type: 2}
