@@ -123,7 +123,8 @@ namespace Inworld.Framework.Samples.Node
                 agentName = m_CharacterName,
                 utterance = content
             };
-            InsertBubble(m_BubbleLeft, utterance);
+            if(m_BubbleLeft != null)
+                InsertBubble(m_BubbleLeft, utterance);
         }
         
         /// <summary>
@@ -204,7 +205,8 @@ namespace Inworld.Framework.Samples.Node
                 agentName = InworldFrameworkUtil.PlayerName,
                 utterance = content
             };
-            InsertBubble(m_BubbleRight, utterance);
+            if(m_BubbleRight != null)   
+                InsertBubble(m_BubbleRight, utterance);
         }
     }
 }
