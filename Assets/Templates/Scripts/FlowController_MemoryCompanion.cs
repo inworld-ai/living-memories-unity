@@ -1,132 +1,301 @@
+/*************************************************************************************************
+ * Copyright 2022-2025 Theai, Inc. dba Inworld AI
+ *
+ * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
+ * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
+ *************************************************************************************************/
+
 using Inworld.Framework;
 using Inworld.Framework.Graph;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Main flow controller for the Memory Companion scene.
+/// Manages the user flow from setup, image upload, video generation, to AI conversation.
+/// </summary>
 public class FlowController_MemoryCompanion : MonoBehaviour
 {
+    #region Serialized Fields
+
+    [Header("Services")]
+    [Tooltip("Runway ML video generation service")]
     public RunwayImageToVideo runwayImageToVideo;
     
-    // public Texture2D inputTexture;
+    [Tooltip("Inworld AI graph executor")]
+    public InworldGraphExecutor graphExecutor;
+    
+    [Tooltip("TTS voice configuration")]
+    public TTSNodeAsset ttsNodeAsset;
+    
+    [Tooltip("Video player component")]
+    public DownloadAndPlayToRT videoplayer;
+
+    [Header("UI - Input")]
+    [Tooltip("Image component displaying the uploaded photo")]
     public Image inputTexture;
     
-    public string defaultPrompt = "Stay faithful to the image; do not invent new objects, text, or people. Camera: static tripod, eye-level (or match the original), no pans/zooms. \n\n If a person is present: preserve identity, age, hair, skin tone, and clothing exactly. Allow only subtle micro-movements: soft blink, tiny eye saccades, slight head tilt, calm breathing; if hair is visible, a faint breeze. No makeup or wardrobe changes.\n\nIf no person is in the image: animate only gentle environmental cues: slight light shift, soft bokeh drift, leaves/curtain barely swaying, reflections flicker, shadows breathing, minimal parallax.\n\nLook: shallow depth of field with the main subject crisp. Mood: quiet memory fragment, understated, not dramatic. Grade: warm vintage/sepia (yellowed-newspaper) tint, mild fade, light film grain, soft vignette. No logos or added props.\n";
-    // public bool useCustomizedPrompt = false;
+    [Tooltip("Toggle to enable custom prompt input")]
     public Toggle useCustomizedPrompt;
+    
+    [Tooltip("Input field for custom video generation prompt")]
     public TMP_InputField descriptionOfMemory;
-    // public string voiceId = "William";
+    
+    [Tooltip("Input field for AI voice ID")]
     public TMP_InputField voiceId;
 
+    [Header("UI - Buttons")]
     public Button setup;
     public Button generate;
-    
-    public TTSNodeAsset ttsNodeAsset;
-    public InworldGraphExecutor graphExecutor;
 
+    [Header("UI - Pages")]
     public GameObject loadingPage;
     public GameObject videoGeneratePage;
     public GameObject chattingPage;
 
-    public DownloadAndPlayToRT videoplayer;
+    [Header("Configuration")]
+    [Tooltip("Default prompt for video generation")]
+    [TextArea(5, 15)]
+    public string defaultPrompt = "Stay faithful to the image; do not invent new objects, text, or people. Camera: static tripod, eye-level (or match the original), no pans/zooms. \n\n If a person is present: preserve identity, age, hair, skin tone, and clothing exactly. Allow only subtle micro-movements: soft blink, tiny eye saccades, slight head tilt, calm breathing; if hair is visible, a faint breeze. No makeup or wardrobe changes.\n\nIf no person is in the image: animate only gentle environmental cues: slight light shift, soft bokeh drift, leaves/curtain barely swaying, reflections flicker, shadows breathing, minimal parallax.\n\nLook: shallow depth of field with the main subject crisp. Mood: quiet memory fragment, understated, not dramatic. Grade: warm vintage/sepia (yellowed-newspaper) tint, mild fade, light film grain, soft vignette. No logos or added props.\n";
 
-    public bool isDebugging = false;
+    #endregion
+
+    #region Private Fields
     
-    bool videoGenrated = false;
-    bool CharacterGenerated = false;
-    
-    bool isFirstTime = true;
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private bool _isFirstTime = true;
+
+    #endregion
+
+    #region Unity Lifecycle
+
+    /// <summary>
+    /// Initialize UI listeners and setup default values.
+    /// </summary>
+    private void Start()
     {
-        setup.onClick.AddListener(LoadInworldScene);
-        generate.onClick.AddListener(GenerateMemory);
-        // InworldController.Instance.OnFrameworkInitialized += OnFrameworkInit;
-        graphExecutor.OnGraphCompiled += OnGraphCompiled;
+        // Setup button listeners
+        if (setup != null) setup.onClick.AddListener(LoadInworldScene);
+        if (generate != null) generate.onClick.AddListener(GenerateMemory);
         
-        if (useCustomizedPrompt)
-            useCustomizedPrompt.onValueChanged.AddListener((res) => {descriptionOfMemory.interactable = res;});
-
-        if (descriptionOfMemory)
+        // Setup graph executor listener
+        if (graphExecutor != null)
         {
-            var ph = descriptionOfMemory.placeholder as TMP_Text;
-            if (ph != null)
-                ph.text = defaultPrompt;
-            descriptionOfMemory.interactable = useCustomizedPrompt;
+            graphExecutor.OnGraphCompiled += OnGraphCompiled;
+        }
+        
+        // Setup custom prompt toggle
+        if (useCustomizedPrompt != null)
+        {
+            useCustomizedPrompt.onValueChanged.AddListener(OnCustomPromptToggled);
+        }
+
+        // Initialize prompt placeholder
+        if (descriptionOfMemory != null)
+        {
+            TMP_Text placeholder = descriptionOfMemory.placeholder as TMP_Text;
+            if (placeholder != null)
+            {
+                placeholder.text = defaultPrompt;
+            }
+            descriptionOfMemory.interactable = useCustomizedPrompt != null && useCustomizedPrompt.isOn;
         }
     }
 
-    void GenerateMemory()
+    /// <summary>
+    /// Cleanup event listeners to prevent memory leaks.
+    /// </summary>
+    private void OnDestroy()
     {
-        if (!isFirstTime)
-            return;
-        isFirstTime = false;
+        // Remove button listeners
+        if (setup != null) setup.onClick.RemoveListener(LoadInworldScene);
+        if (generate != null) generate.onClick.RemoveListener(GenerateMemory);
+        
+        // Remove graph executor listener
+        if (graphExecutor != null)
+        {
+            graphExecutor.OnGraphCompiled -= OnGraphCompiled;
+        }
+        
+        // Remove custom prompt toggle listener
+        if (useCustomizedPrompt != null)
+        {
+            useCustomizedPrompt.onValueChanged.RemoveListener(OnCustomPromptToggled);
+        }
+    }
 
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Initiates memory video generation from uploaded image.
+    /// </summary>
+    public void GenerateMemory()
+    {
+        // Prevent multiple generation attempts
+        if (!_isFirstTime)
+        {
+            Debug.LogWarning("Video generation already in progress.");
+            return;
+        }
+        
+        _isFirstTime = false;
+
+        // Validate input texture
         if (inputTexture == null || inputTexture.mainTexture == null)
         {
-            Debug.Log($"inputTexture is null, return.");
+            Debug.LogError("Input texture is null. Please upload an image first.");
+            _isFirstTime = true;
             return;
         }
 
-        if(!isDebugging)
-            runwayImageToVideo.StartGeneration(useCustomizedPrompt.isOn?descriptionOfMemory.textComponent.text : defaultPrompt, (Texture2D)inputTexture.mainTexture, OnVideoGenerated);
+        // Get the prompt text
+        string prompt = (useCustomizedPrompt != null && useCustomizedPrompt.isOn) 
+            ? descriptionOfMemory.textComponent.text 
+            : defaultPrompt;
+
+        // Start video generation
+        if (runwayImageToVideo != null && runwayImageToVideo.useRunwayGeneration)
+        {
+            runwayImageToVideo.StartGeneration(prompt, (Texture2D)inputTexture.mainTexture, OnVideoGenerated);
+        }
         else
-            OnVideoGenerated("C:/Users/Shuang/AppData/LocalLow/DefaultCompany/TestFramework/runway_gen_video.mp4");
+        {
+            // Skip video generation if not enabled
+            OnVideoGenerated(Application.persistentDataPath + "/placeholder_video.mp4");
+        }
     }
 
-    void LoadInworldScene()
+    /// <summary>
+    /// Loads and initializes the Inworld AI scene.
+    /// </summary>
+    public void LoadInworldScene()
     {
-        if(setup != null && setup.GetComponentInChildren<TMP_Text>()!= null)
-            setup.GetComponentInChildren<TMP_Text>().text = "Connecting to memory channel...";
-        if (InworldFrameworkUtil.APIKey != null && !string.IsNullOrEmpty(APIController_Memory.Instance.InworldAPIKey))
+        // Validate API controller
+        if (APIController_Memory.Instance == null)
+        {
+            Debug.LogError("APIController_Memory instance not found!");
+            return;
+        }
+
+        // Update button text
+        if (setup != null)
+        {
+            TMP_Text buttonText = setup.GetComponentInChildren<TMP_Text>();
+            if (buttonText != null)
+            {
+                buttonText.text = "Connecting to memory channel...";
+            }
+        }
+
+        // Set API key
+        if (!string.IsNullOrEmpty(APIController_Memory.Instance.InworldAPIKey))
         {
             InworldFrameworkUtil.APIKey = APIController_Memory.Instance.InworldAPIKey;
         }
         
+        // Set voice ID
         if (ttsNodeAsset != null && voiceId != null && !string.IsNullOrEmpty(voiceId.text))
         {
             ttsNodeAsset.voiceID = voiceId.text;
-        } 
+        }
         
+        // Initialize Inworld
         InworldController.Instance.InitializeAsync();
     }
 
-    void OnGraphCompiled(InworldGraphAsset graphAsset)
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Called when custom prompt toggle value changes.
+    /// </summary>
+    private void OnCustomPromptToggled(bool isOn)
     {
-        if (InworldController.Instance != null && InworldController.TTS != null &&
+        if (descriptionOfMemory != null)
+        {
+            descriptionOfMemory.interactable = isOn;
+        }
+    }
+
+    #endregion
+
+    #region Event Handlers
+
+    /// <summary>
+    /// Called when Inworld graph compilation is complete.
+    /// </summary>
+    private void OnGraphCompiled(InworldGraphAsset graphAsset)
+    {
+        // Verify initialization
+        if (InworldController.Instance != null && 
+            InworldController.TTS != null &&
             !string.IsNullOrEmpty(InworldController.TTS.Voice.SpeakerID))
         {
-            // Load Next page
-            loadingPage.SetActive(false);
-            if(runwayImageToVideo != null && runwayImageToVideo.useRunwayGenration)
-                videoGeneratePage.SetActive(true);
-            else
+            // Hide loading page
+            if (loadingPage != null)
             {
-                chattingPage.SetActive(true);
+                loadingPage.SetActive(false);
             }
 
+            // Show appropriate next page
+            if (runwayImageToVideo != null && runwayImageToVideo.useRunwayGeneration)
+            {
+                if (videoGeneratePage != null)
+                {
+                    videoGeneratePage.SetActive(true);
+                }
+            }
+            else
+            {
+                if (chattingPage != null)
+                {
+                    chattingPage.SetActive(true);
+                }
+            }
+
+            Debug.Log("Inworld AI initialized successfully.");
             return;
         }
         
-        Debug.LogError($"Init failed! ");
+        Debug.LogError("Inworld AI initialization failed. Please check your API key and voice configuration.");
     }
     
-    void OnVideoGenerated(string result)
+    /// <summary>
+    /// Called when video generation is complete or fails.
+    /// </summary>
+    private void OnVideoGenerated(string result)
     {
         if (result.Contains("Error: "))
         {
-            // Report error
-            Debug.Log($"Error: {result}");
-            isFirstTime = true;
+            // Handle error
+            Debug.LogError($"Video generation failed: {result}");
+            _isFirstTime = true;
+            return;
         }
-        else
+
+        // Video generated successfully
+        Debug.Log($"Video generated successfully: {result}");
+        
+        // Switch to chat page
+        if (videoGeneratePage != null)
         {
-            // Display video
             videoGeneratePage.SetActive(false);
+        }
+        
+        if (chattingPage != null)
+        {
             chattingPage.SetActive(true);
-            videoplayer?.PlayVideo(result);
-            Debug.Log("Video generated: " + result);
+        }
+
+        // Play the video
+        if (videoplayer != null)
+        {
+            videoplayer.PlayVideo(result);
         }
     }
+
+    #endregion
 }

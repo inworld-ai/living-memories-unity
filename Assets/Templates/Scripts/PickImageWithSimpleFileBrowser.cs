@@ -1,49 +1,110 @@
+/*************************************************************************************************
+ * Copyright 2022-2025 Theai, Inc. dba Inworld AI
+ *
+ * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
+ * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
+ *************************************************************************************************/
+
 using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Provides image selection functionality using Simple File Browser.
+/// Loads and displays the selected image in a RawImage component with proper aspect ratio.
+/// </summary>
 public class PickImageWithSimpleFileBrowser : MonoBehaviour
 {
+    #region Serialized Fields
+
+    [Header("UI Configuration")]
+    [Tooltip("Target raw image to display the selected picture")]
     public RawImage targetRawImage;
 
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Opens file browser dialog to pick an image file.
+    /// Supported formats: JPG, JPEG, PNG
+    /// </summary>
     public void OnPickButton()
     {
-        // Filters (jpg/png)
-        SimpleFileBrowser.FileBrowser.SetFilters(true, 
-            new SimpleFileBrowser.FileBrowser.Filter("Images", ".jpg", ".jpeg", ".png"));
+        // Set file filters for image types
+        SimpleFileBrowser.FileBrowser.SetFilters(
+            true, 
+            new SimpleFileBrowser.FileBrowser.Filter("Images", ".jpg", ".jpeg", ".png")
+        );
 
-        // Open dialog (blocking UI until selected/cancelled)
+        // Show file browser dialog
         SimpleFileBrowser.FileBrowser.ShowLoadDialog(
-            onSuccess: (paths) => StartCoroutine(Load(paths[0])),
-            onCancel:  () => Debug.Log("Canceled"),
-            pickMode:  SimpleFileBrowser.FileBrowser.PickMode.Files,
+            onSuccess: (paths) => StartCoroutine(LoadImage(paths[0])),
+            onCancel: () => Debug.Log("Image selection cancelled."),
+            pickMode: SimpleFileBrowser.FileBrowser.PickMode.Files,
+            allowMultiSelection: false,
             initialPath: null,
-            allowMultiSelection: false
+            title: "Select Image"
         );
     }
 
-    private IEnumerator Load(string path)
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Loads image from file path and displays it in the target RawImage.
+    /// </summary>
+    /// <param name="path">File path to the image</param>
+    private IEnumerator LoadImage(string path)
     {
-        byte[] data = File.ReadAllBytes(path);
-        var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-        if (!tex.LoadImage(data, false))
+        if (string.IsNullOrEmpty(path))
         {
-            Debug.LogError("Decode failed: " + path);
+            Debug.LogError("Image path is null or empty.");
             yield break;
         }
-        if (targetRawImage)
+
+        if (!File.Exists(path))
         {
-            targetRawImage.texture = tex;
+            Debug.LogError($"Image file not found: {path}");
+            yield break;
+        }
 
-            // Ensure there is an AspectRatioFitter and set it to height-controls-width
-            var arf = targetRawImage.GetComponent<AspectRatioFitter>();
-            if (!arf) arf = targetRawImage.gameObject.AddComponent<AspectRatioFitter>();
+        // Read image data
+        byte[] imageData = File.ReadAllBytes(path);
+        
+        // Create texture and load image
+        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        if (!texture.LoadImage(imageData, false))
+        {
+            Debug.LogError($"Failed to decode image: {path}");
+            Destroy(texture);
+            yield break;
+        }
 
-            arf.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
-            arf.aspectRatio = (float)tex.width / tex.height; // width / height
-            // Keep the current height as-is; ARF will adjust width to match the ratio.
-            // (If wrapped in layout groups, this plays nicely.)
+        // Display in target RawImage
+        if (targetRawImage != null)
+        {
+            targetRawImage.texture = texture;
+
+            // Setup aspect ratio fitter
+            AspectRatioFitter aspectFitter = targetRawImage.GetComponent<AspectRatioFitter>();
+            if (aspectFitter == null)
+            {
+                aspectFitter = targetRawImage.gameObject.AddComponent<AspectRatioFitter>();
+            }
+
+            aspectFitter.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
+            aspectFitter.aspectRatio = (float)texture.width / texture.height;
+
+            Debug.Log($"Image loaded successfully: {path} ({texture.width}x{texture.height})");
+        }
+        else
+        {
+            Debug.LogWarning("Target RawImage is null. Image loaded but not displayed.");
         }
     }
+
+    #endregion
 }

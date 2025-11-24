@@ -13470,7 +13470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66cc23e17070a74fa1d75ab521014c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useRunwayGenration: 1
+  useRunwayGeneration: 1
   apiBase: https://api.dev.runwayml.com
   runwayApiVersion: 2024-11-06
   model: gen4_turbo
@@ -13509,8 +13509,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32869d871dc47eb4d95a6a7a7e1be2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inworldAPIKey: YOUR_INWORLD_API_KEY
-  runwayAPIKey: YOUR_RUNWAY_API_KEY
+  _inworldAPIKey: YOUR_INWORLD_API_KEY
+  _runwayAPIKey: YOUR_RUNWAY_API_KEY
 --- !u!1 &1820154427
 GameObject:
   m_ObjectHideFlags: 0
@@ -14367,7 +14367,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runwayImageToVideo: {fileID: 1746821973}
+  graphExecutor: {fileID: 8770497513306821714}
+  ttsNodeAsset: {fileID: 11400000, guid: 7735b6f4d5e64564aa05c03f16363b1b, type: 2}
+  videoplayer: {fileID: 806046795}
   inputTexture: {fileID: 1559795736}
+  useCustomizedPrompt: {fileID: 1820154429}
+  descriptionOfMemory: {fileID: 97815900}
+  voiceId: {fileID: 1033830757}
+  setup: {fileID: 1106184665}
+  generate: {fileID: 289229526}
+  loadingPage: {fileID: 1254216105}
+  videoGeneratePage: {fileID: 238179565}
+  chattingPage: {fileID: 1204797171}
   defaultPrompt: "Stay faithful to the image; do not invent new objects, text, or
     people. Camera: static tripod, eye-level (or match the original), no pans/zooms.
     \n\n If a person is present: preserve identity, age, hair, skin tone, and clothing
@@ -14379,18 +14390,6 @@ MonoBehaviour:
     with the main subject crisp. Mood: quiet memory fragment, understated, not dramatic.
     Grade: warm vintage/sepia (yellowed-newspaper) tint, mild fade, light film grain,
     soft vignette. No logos or added props.\n"
-  useCustomizedPrompt: {fileID: 1820154429}
-  descriptionOfMemory: {fileID: 97815900}
-  voiceId: {fileID: 1033830757}
-  setup: {fileID: 1106184665}
-  generate: {fileID: 289229526}
-  ttsNodeAsset: {fileID: 11400000, guid: 7735b6f4d5e64564aa05c03f16363b1b, type: 2}
-  graphExecutor: {fileID: 8770497513306821714}
-  loadingPage: {fileID: 1254216105}
-  videoGeneratePage: {fileID: 238179565}
-  chattingPage: {fileID: 1204797171}
-  videoplayer: {fileID: 806046795}
-  isDebugging: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

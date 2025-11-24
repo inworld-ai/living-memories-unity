@@ -2,7 +2,7 @@ Shader "Unlit/TimeVaryingGlow"
 {
     Properties
     {
-        // 基础发光（与上一版一致）
+        // Basic glow properties
         _Radius     ("Radius (0~1)", Range(0.0,1.0)) = 0.25
         _Softness   ("Edge Softness", Range(0.001, 1.0)) = 0.2
         _Intensity  ("Intensity", Range(0.0, 5.0)) = 1.5
@@ -11,19 +11,19 @@ Shader "Unlit/TimeVaryingGlow"
         _NoiseScale ("Noise Scale", Range(0.0, 10.0)) = 2.0
         _Center     ("Center (UV)", Vector) = (0.5, 0.5, 0, 0)
 
-        // 双色渐变
+        // Dual color gradient
         _ColorA     ("Color A", Color) = (1,0.85,0.5,1)
         _ColorB     ("Color B", Color) = (0.5,0.8,1,1)
 
-        // 渐变时间控制
-        _GradRotateSpeed ("Linear Grad Rotate Speed", Range(0, 4)) = 0.6  // 线性渐变方向旋转速度
-        _GradModeSpeed   ("Mode Lerp Speed", Range(0, 4)) = 0.5          // 在径向/线性间切换速度
-        _GradShiftAmp    ("Gradient Shift Amp", Range(0, 1)) = 0.2       // 渐变偏移幅度（颜色中心随时间漂移）
+        // Gradient animation controls
+        _GradRotateSpeed ("Linear Grad Rotate Speed", Range(0, 4)) = 0.6  // Linear gradient direction rotation speed
+        _GradModeSpeed   ("Mode Lerp Speed", Range(0, 4)) = 0.5          // Speed of switching between radial/linear modes
+        _GradShiftAmp    ("Gradient Shift Amp", Range(0, 1)) = 0.2       // Gradient offset amplitude (color center drift over time)
 
-        // 掩膜纹理（控制发光范围，R 通道）
+        // Mask texture (controls glow region, R channel)
         _MaskTex   ("Glow Mask (R)", 2D) = "white" {}
         _MaskPower ("Mask Power", Range(0.0, 4.0)) = 1.0
-        _MaskBlend ("Mask Blend", Range(0.0, 1.0)) = 1.0  // 1=完全由掩膜限制，0=不使用掩膜
+        _MaskBlend ("Mask Blend", Range(0.0, 1.0)) = 1.0  // 1=fully controlled by mask, 0=no mask effect
     }
 
     SubShader
@@ -71,7 +71,7 @@ Shader "Unlit/TimeVaryingGlow"
                 return o;
             }
 
-            // 轻量 value noise
+            // Lightweight value noise
             float hash21(float2 p) {
                 p = frac(p * float2(123.34, 345.45));
                 p += dot(p, p + 34.345);
@@ -94,49 +94,49 @@ Shader "Unlit/TimeVaryingGlow"
                 float2 p = i.uv - center;
                 float  r = length(p);
 
-                // 时间
+                // Time parameter
                 float t = _Time.y * _Speed;
 
-                // 半径随时间呼吸 + 轻微噪声
+                // Radius breathing animation with subtle noise
                 float n = (noise2(i.uv * _NoiseScale + t) - 0.5) * 0.1;
                 float radius = _Radius + _PulseAmp * sin(t * 6.28318) + n;
 
-                // 基础柔边光晕（从中心向外淡出）
+                // Base soft-edge glow (fade out from center)
                 float soft = max(0.001, _Softness);
                 float glow = 1.0 - smoothstep(radius, radius + soft, r);
 
-                // —— 掩膜限制（R 通道）——
+                // Mask limitation (R channel)
                 float2 uvMask = i.uv * _MaskTex_ST.xy + _MaskTex_ST.zw;
                 float maskR = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, uvMask).r;
-                // 可选提升/压缩：pow
+                // Optional power adjustment
                 float mask = pow(saturate(maskR), _MaskPower);
-                // 与原始 glow 混合（_MaskBlend 决定掩膜影响权重）
+                // Blend with original glow (_MaskBlend controls mask influence weight)
                 glow = lerp(glow, glow * mask, _MaskBlend);
 
-                // —— 双色渐变（随时间变化）——
-                // 渐变方式：径向 vs 线性（随时间在两者之间摆动）
+                // Dual color gradient (time-varying)
+                // Gradient mode: radial vs linear (oscillates between the two over time)
                 float modeLerp = 0.5 + 0.5 * sin(_Time.y * _GradModeSpeed * 6.28318); // 0~1
 
-                // 1) 径向：基于 r 的内外过渡（越靠中心越靠近 ColorA）
+                // 1) Radial: transition based on r (closer to center = closer to ColorA)
                 float g_rad = saturate(1.0 - smoothstep(0.0, radius + soft, r));
-                // 为了让颜色中心也随时间漂移一点点：
+                // Add subtle drift to color center over time
                 g_rad = saturate(g_rad + _GradShiftAmp * sin(_Time.y * 1.3));
 
-                // 2) 线性：基于某个旋转方向的投影
+                // 2) Linear: based on projection in a rotating direction
                 float ang = _Time.y * _GradRotateSpeed * 6.28318;
-                float2 dir = float2(cos(ang), sin(ang));        // 线性渐变方向
-                // 将 p 在 dir 上投影并归一化到 0~1
+                float2 dir = float2(cos(ang), sin(ang));        // Linear gradient direction
+                // Project p onto dir and normalize to 0~1
                 float proj = dot(p, dir) / max(radius + soft, 1e-4);
                 float g_lin = saturate(proj * 0.5 + 0.5);
                 g_lin = saturate(g_lin + _GradShiftAmp * cos(_Time.y * 1.1));
 
-                // 在两种模式之间插值
+                // Interpolate between the two modes
                 float g = lerp(g_rad, g_lin, modeLerp);
 
-                // 最终颜色混合
+                // Final color blending
                 float3 col = lerp(_ColorA.rgb, _ColorB.rgb, g);
 
-                // 输出（alpha 由 glow 决定）
+                // Output (alpha determined by glow)
                 float a = saturate(glow);
                 float3 c = col * (_Intensity * glow);
 

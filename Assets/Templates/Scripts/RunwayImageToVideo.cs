@@ -1,3 +1,10 @@
+/*************************************************************************************************
+ * Copyright 2022-2025 Theai, Inc. dba Inworld AI
+ *
+ * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
+ * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
+ *************************************************************************************************/
+
 using System;
 using System.Collections;
 using System.IO;
@@ -5,253 +12,333 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Payload structure for Runway ML image-to-video API request.
+/// </summary>
 [Serializable]
 public class ImageToVideoPayload
 {
-    public string model;        // e.g. "gen4_turbo"
-    public string promptText;   // your multi-line text is OK now
-    public string promptImage;  // data URI: data:image/jpeg;base64,...
-    public string ratio;        // e.g. "1280:720" (see notes)
-    public int duration;        // 5 (model-dependent)
+    public string model;        // Model name (e.g. "gen4_turbo")
+    public string promptText;   // Generation prompt text
+    public string promptImage;  // Data URI: data:image/jpeg;base64,...
+    public string ratio;        // Video ratio (e.g. "1280:720")
+    public int duration;        // Duration in seconds (model-dependent)
 }
 
-// Attach to a GameObject and call StartGeneration() (e.g., from Start()).
+/// <summary>
+/// Handles image-to-video generation using Runway ML API.
+/// Converts static images into animated videos with customizable prompts and parameters.
+/// </summary>
 public class RunwayImageToVideo : MonoBehaviour
 {
-    public bool useRunwayGenration = false;
-    [Header("Runway API")]
-    [Tooltip("Runway API Settings")]
+    #region Serialized Fields
+
+    [Header("General Settings")]
+    [Tooltip("Enable Runway ML video generation")]
+    public bool useRunwayGeneration = false;
+
+    [Header("Runway API Configuration")]
+    [Tooltip("Runway API base URL")]
     public string apiBase = "https://api.dev.runwayml.com";
+    
+    [Tooltip("Runway API version")]
     public string runwayApiVersion = "2024-11-06";
 
-    [Header("Model & Params")]
-    [Tooltip("Model id, e.g. gen4_turbo or gen3a_turbo")]
+    [Header("Model Parameters")]
+    [Tooltip("Model ID (e.g., gen4_turbo or gen3a_turbo)")]
     public string model = "gen4_turbo";
 
-    // Use Gen-4 Turbo ratios like 1280:720; for Gen-3A Turbo use 1280:768 / 768:1280.
+    [Tooltip("Video ratio - Gen-4 Turbo: 1280:720, Gen-3A Turbo: 1280:768 or 768:1280")]
     public string ratio = "1280:720";
 
+    [Tooltip("Video duration in seconds (5-10)")]
     [Range(5, 10)]
     public int durationSeconds = 5;
 
+    [Tooltip("Default generation prompt")]
     [TextArea(2, 6)]
     public string promptText = "Minimal motion. Hold framing. Cinematic lighting.";
-/*
-    [Header("Image Inputs")]
-    [Tooltip("HTTPS URL or data URI for the starting image")]
-    public string promptImageUrl = "https://example.com/your_image.jpg";
 
-    [Tooltip("(Optional) HTTPS URL or data URI for the ending image; if set, the clip will end on this image")]
-    public string endImageUrl = ""; // leave empty to start-only
-*/
-    [Header("Image (choose ONE input source)")]
-    [Tooltip("If provided, we encode this Texture2D to a data URI (PNG or JPG).")]
+    [Header("Image Input")]
+    [Tooltip("Input texture to animate (optional, can be provided via StartGeneration)")]
     public Texture2D inputTexture;
-    public bool encodeAsJpg = true;       // JPG is smaller; helps stay under data URI size limit.
-    [Tooltip("OR: Raw base64 (no prefix). We'll add data URI prefix below.")]
-    [TextArea(3,8)] public string base64WithoutPrefix;
-    [Tooltip("MIME for base64WithoutPrefix, e.g. image/jpeg or image/png")]
+    
+    [Tooltip("Encode as JPG (smaller file size, stays under 5MB limit)")]
+    public bool encodeAsJpg = true;
+
+    [Tooltip("Alternative: Raw base64 string without data URI prefix")]
+    [TextArea(3, 8)]
+    public string base64WithoutPrefix;
+    
+    [Tooltip("MIME type for base64 input (e.g., image/jpeg or image/png)")]
     public string base64Mime = "image/jpeg";
     
-    [Header("Output")]
+    [Header("Output Settings")]
+    [Tooltip("Output video filename")]
     public string fileName = "runway_i2v.mp4";
 
+    #endregion
+
+    #region Constants
+
+    private const int MaxDataUriSize = 5 * 1024 * 1024; // 5 MB limit for image data URIs
+    private const float PollingInterval = 2f; // Seconds between status checks
+    private const float TimeoutSeconds = 300f; // 5 minutes timeout
+
+    #endregion
+
+    #region Data Transfer Objects
+
+    [Serializable]
+    private class CreateTaskResponse
+    {
+        public string id;
+        public string status;
+        public string createdAt;
+    }
+
+    [Serializable]
+    private class ErrorInfo
+    {
+        public string type;
+        public string message;
+    }
+
+    [Serializable]
+    private class TaskStatusResponse
+    {
+        public string id;
+        public string status;
+        public string createdAt;
+        public string[] output;
+        public ErrorInfo error;
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Starts video generation from an image with a custom prompt.
+    /// </summary>
+    /// <param name="userInput">Custom generation prompt text</param>
+    /// <param name="image">Source image to animate</param>
+    /// <param name="onGenerationComplete">Callback with result path or error message</param>
     [ContextMenu("Start Generation")]
     public void StartGeneration(string userInput, Texture2D image, Action<string> onGenerationComplete)
     {
-        if (!useRunwayGenration)
+        // Check if generation is enabled
+        if (!useRunwayGeneration)
         {
-            Debug.Log($"Runway generation skipped!");
-            onGenerationComplete?.Invoke("Error: Runway generation skipped!");
+            Debug.LogWarning("Runway generation is disabled.");
+            onGenerationComplete?.Invoke("Error: Runway generation is disabled.");
             return;
         }
         
+        // Validate API key
         if (string.IsNullOrEmpty(APIController_Memory.Instance.RunwayAPIKey))
         {
-            Debug.LogError("Runway API key missing.");
+            Debug.LogError("Runway API key is missing. Please set it in APIController_Memory.");
             onGenerationComplete?.Invoke("Error: Runway API key missing.");
             return;
         }
-        /*
-        if (string.IsNullOrEmpty(promptImageUrl))
-        {
-            Debug.LogError("promptImageUrl is required (HTTPS URL or data URI).");
-            return;
-        }*/
-        StartCoroutine(Co_GenerateAndDownload(userInput, image, onGenerationComplete));
+
+        // Start generation coroutine
+        StartCoroutine(GenerateAndDownload(userInput, image, onGenerationComplete));
     }
 
-    // --- DTOs ---
-    [Serializable] private class CreateTaskResponse { public string id; public string status; public string createdAt; }
-    [Serializable] private class ErrorInfo { public string type; public string message; }
-    [Serializable] private class TaskStatusResponse { public string id; public string status; public string createdAt; public string[] output; public ErrorInfo error; }
+    #endregion
 
-    private IEnumerator Co_GenerateAndDownload(string userInput, Texture2D image, Action<string> onGenerationComplete)
+    #region Private Methods
+
+    /// <summary>
+    /// Coroutine to generate video and download the result.
+    /// </summary>
+    private IEnumerator GenerateAndDownload(string userInput, Texture2D image, Action<string> onGenerationComplete)
     {
-        // Build minimal JSON by hand so we can express `promptImage` as string OR array.
-        // If endImageUrl is provided, we send the array form with positions per docs.
-        // Otherwise we send a single string for `promptImage`.
-        // 1) Build data URI from either Texture2D or raw base64 string
+        // Build data URI from texture or base64 string
         string dataUri = null;
 
-        //if (inputTexture != null)
         if (image != null)
         {
-            //byte[] bytes = encodeAsJpg ? inputTexture.EncodeToJPG(90) : inputTexture.EncodeToPNG();
-            byte[] bytes = encodeAsJpg ? image.EncodeToJPG(90) : image.EncodeToPNG();
-            if (bytes == null || bytes.Length == 0)
+            // Encode texture to bytes
+            byte[] imageBytes = encodeAsJpg ? image.EncodeToJPG(90) : image.EncodeToPNG();
+            
+            if (imageBytes == null || imageBytes.Length == 0)
             {
                 Debug.LogError("Failed to encode image.");
                 onGenerationComplete?.Invoke("Error: Failed to encode image.");
                 yield break;
             }
-            string b64 = Convert.ToBase64String(bytes);
-            string mime = encodeAsJpg ? "image/jpeg" : "image/png";
-            dataUri = $"data:{mime};base64,{b64}";
+
+            // Convert to base64 data URI
+            string base64 = Convert.ToBase64String(imageBytes);
+            string mimeType = encodeAsJpg ? "image/jpeg" : "image/png";
+            dataUri = $"data:{mimeType};base64,{base64}";
         }
         else if (!string.IsNullOrEmpty(base64WithoutPrefix))
         {
+            // Use provided base64 string
             if (string.IsNullOrEmpty(base64Mime))
             {
                 Debug.LogError("base64Mime must be set when using base64WithoutPrefix.");
-                onGenerationComplete?.Invoke("Error: base64Mime must be set when using base64WithoutPrefix.");
+                onGenerationComplete?.Invoke("Error: base64Mime must be specified.");
                 yield break;
             }
             dataUri = $"data:{base64Mime};base64,{base64WithoutPrefix}";
         }
         else
         {
-            Debug.LogError("Provide either image OR base64WithoutPrefix.");
-            onGenerationComplete?.Invoke("Error: Provide either image OR base64WithoutPrefix.");
+            Debug.LogError("No image provided. Please provide either a Texture2D or base64 string.");
+            onGenerationComplete?.Invoke("Error: No image provided.");
             yield break;
         }
 
-        // Optional: warn if data URI is likely over the 5 MB encoded cap for images
-        var dataUriBytes = Encoding.UTF8.GetByteCount(dataUri);
-        const int fiveMB = 5 * 1024 * 1024;
-        if (dataUriBytes > fiveMB)
+        // Check data URI size
+        int dataUriSize = Encoding.UTF8.GetByteCount(dataUri);
+        if (dataUriSize > MaxDataUriSize)
         {
-            Debug.LogWarning($"Data URI is {dataUriBytes / (1024f*1024f):0.00} MB (> 5 MB limit). Consider using JPG or smaller image.");
+            Debug.LogWarning($"Data URI size is {dataUriSize / (1024f * 1024f):0.00} MB (exceeds {MaxDataUriSize / (1024 * 1024)} MB limit). Consider using JPG or smaller image.");
         }
         
-        var payload = new ImageToVideoPayload {
+        // Create payload
+        ImageToVideoPayload payload = new ImageToVideoPayload
+        {
             model = model,
-            // promptText = promptText,          // no manual escaping needed
             promptText = userInput,
-            promptImage = dataUri,            // from your Texture2D/base64 path
+            promptImage = dataUri,
             ratio = ratio,
             duration = durationSeconds
         };
         string json = JsonUtility.ToJson(payload);
         
-        using (var req = new UnityWebRequest($"{apiBase}/v1/image_to_video", "POST"))
+        // Send create request
+        using (UnityWebRequest request = new UnityWebRequest($"{apiBase}/v1/image_to_video", "POST"))
         {
-            req.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-            req.downloadHandler = new DownloadHandlerBuffer();
-            req.SetRequestHeader("Content-Type", "application/json");
-            req.SetRequestHeader("Authorization", $"Bearer {APIController_Memory.Instance.RunwayAPIKey}");
-            req.SetRequestHeader("X-Runway-Version", runwayApiVersion);
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Authorization", $"Bearer {APIController_Memory.Instance.RunwayAPIKey}");
+            request.SetRequestHeader("X-Runway-Version", runwayApiVersion);
 
-            yield return req.SendWebRequest();
-            if (req.result != UnityWebRequest.Result.Success)
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"Create failed: {req.responseCode} {req.error}\n{req.downloadHandler.text}");
-                onGenerationComplete?.Invoke($"Error: Create failed: {req.responseCode}:  {req.error}\n}}.");
+                Debug.LogError($"Task creation failed: {request.responseCode} {request.error}\n{request.downloadHandler.text}");
+                onGenerationComplete?.Invoke($"Error: Task creation failed with code {request.responseCode}.");
                 yield break;
             }
 
-            var create = JsonUtility.FromJson<CreateTaskResponse>(req.downloadHandler.text);
-            if (create == null || string.IsNullOrEmpty(create.id))
+            CreateTaskResponse response = JsonUtility.FromJson<CreateTaskResponse>(request.downloadHandler.text);
+            if (response == null || string.IsNullOrEmpty(response.id))
             {
-                Debug.LogError($"Unexpected create response: {req.downloadHandler.text}");
-                onGenerationComplete?.Invoke("Error: Unexpected create response.");
+                Debug.LogError($"Unexpected create response: {request.downloadHandler.text}");
+                onGenerationComplete?.Invoke("Error: Invalid task creation response.");
                 yield break;
             }
 
-            Debug.Log($"Runway task created: {create.id}");
-            yield return StartCoroutine(Co_PollTaskAndDownload(create.id, onGenerationComplete));
+            Debug.Log($"Runway task created successfully: {response.id}");
+            yield return StartCoroutine(PollTaskAndDownload(response.id, onGenerationComplete));
         }
     }
 
-    private IEnumerator Co_PollTaskAndDownload(string taskId,Action<string> onGenerationComplete)
+    /// <summary>
+    /// Polls task status and downloads video when complete.
+    /// </summary>
+    private IEnumerator PollTaskAndDownload(string taskId, Action<string> onGenerationComplete)
     {
         string statusUrl = $"{apiBase}/v1/tasks/{taskId}";
-        float start = Time.realtimeSinceStartup;
-        const float timeout = 300f;
+        float startTime = Time.realtimeSinceStartup;
 
         while (true)
         {
-            using (var req = UnityWebRequest.Get(statusUrl))
+            using (UnityWebRequest request = UnityWebRequest.Get(statusUrl))
             {
-                req.downloadHandler = new DownloadHandlerBuffer();
-                req.SetRequestHeader("Authorization", $"Bearer {APIController_Memory.Instance.RunwayAPIKey}");
-                req.SetRequestHeader("X-Runway-Version", runwayApiVersion);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Authorization", $"Bearer {APIController_Memory.Instance.RunwayAPIKey}");
+                request.SetRequestHeader("X-Runway-Version", runwayApiVersion);
 
-                yield return req.SendWebRequest();
-                if (req.result != UnityWebRequest.Result.Success)
+                yield return request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError($"Status error: {req.responseCode} {req.error}\n{req.downloadHandler.text}");
-                    onGenerationComplete?.Invoke("Error: State error {req.responseCode}");
+                    Debug.LogError($"Status check failed: {request.responseCode} {request.error}\n{request.downloadHandler.text}");
+                    onGenerationComplete?.Invoke($"Error: Status check failed with code {request.responseCode}.");
                     yield break;
                 }
 
-                var status = JsonUtility.FromJson<TaskStatusResponse>(req.downloadHandler.text);
+                TaskStatusResponse status = JsonUtility.FromJson<TaskStatusResponse>(request.downloadHandler.text);
                 if (status == null)
                 {
-                    Debug.LogError($"Unexpected status response: {req.downloadHandler.text}");
-                    onGenerationComplete?.Invoke("Error: State == null");
+                    Debug.LogError($"Invalid status response: {request.downloadHandler.text}");
+                    onGenerationComplete?.Invoke("Error: Invalid status response.");
                     yield break;
                 }
 
+                // Check if task succeeded
                 if (string.Equals(status.status, "SUCCEEDED", StringComparison.OrdinalIgnoreCase))
                 {
                     if (status.output != null && status.output.Length > 0)
                     {
-                        yield return StartCoroutine(Co_DownloadFile(status.output[0], onGenerationComplete));
+                        Debug.Log($"Task completed successfully. Downloading video...");
+                        yield return StartCoroutine(DownloadFile(status.output[0], onGenerationComplete));
                         yield break;
                     }
-                    Debug.LogError("SUCCEEDED but no output URLs.");
-                    onGenerationComplete?.Invoke("Error: no url");
+                    
+                    Debug.LogError("Task succeeded but no output URLs were provided.");
+                    onGenerationComplete?.Invoke("Error: No output URL.");
                     yield break;
                 }
 
+                // Check if task failed
                 if (string.Equals(status.status, "FAILED", StringComparison.OrdinalIgnoreCase))
                 {
-                    Debug.LogError($"Task FAILED: {(status.error != null ? status.error.message : "Unknown error")}");
-                    onGenerationComplete?.Invoke("Error: failed.");
+                    string errorMessage = status.error != null ? status.error.message : "Unknown error";
+                    Debug.LogError($"Task failed: {errorMessage}");
+                    onGenerationComplete?.Invoke($"Error: Task failed - {errorMessage}");
                     yield break;
                 }
 
-                if (Time.realtimeSinceStartup - start > timeout)
+                // Check timeout
+                if (Time.realtimeSinceStartup - startTime > TimeoutSeconds)
                 {
-                    Debug.LogError("Task timed out.");
-                    onGenerationComplete?.Invoke("Error: timeout");
+                    Debug.LogError($"Task timed out after {TimeoutSeconds} seconds.");
+                    onGenerationComplete?.Invoke("Error: Task timed out.");
                     yield break;
                 }
 
-                yield return new WaitForSeconds(2f);
+                // Wait before next poll
+                yield return new WaitForSeconds(PollingInterval);
             }
         }
     }
 
-    private IEnumerator Co_DownloadFile(string url, Action<string> onGenerationComplete)
+    /// <summary>
+    /// Downloads video file from URL to local storage.
+    /// </summary>
+    private IEnumerator DownloadFile(string url, Action<string> onGenerationComplete)
     {
-        string path = Path.Combine(Application.persistentDataPath, fileName);
-        Debug.Log($"video download path: {path}");
-        using (var req = UnityWebRequest.Get(url))
-        {
-            req.downloadHandler = new DownloadHandlerFile(path);
-            yield return req.SendWebRequest();
+        string localPath = Path.Combine(Application.persistentDataPath, fileName);
+        Debug.Log($"Downloading video to: {localPath}");
 
-            if (req.result != UnityWebRequest.Result.Success)
+        using (UnityWebRequest request = UnityWebRequest.Get(url))
+        {
+            request.downloadHandler = new DownloadHandlerFile(localPath);
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"Download failed: {req.responseCode} {req.error}");
+                Debug.LogError($"Video download failed: {request.responseCode} {request.error}");
+                onGenerationComplete?.Invoke($"Error: Download failed with code {request.responseCode}.");
                 yield break;
             }
         }
-        onGenerationComplete?.Invoke(path);
-        Debug.Log($"Saved video: {path} (Runway output URLs are ephemeral; keep this file.)");
+
+        Debug.Log($"Video saved successfully: {localPath}");
+        Debug.Log("Note: Runway output URLs are ephemeral. The local file should be kept.");
+        onGenerationComplete?.Invoke(localPath);
     }
 
-    private static string EscapeJson(string s) => s?.Replace("\\", "\\\\").Replace("\"", "\\\"");
+    #endregion
 }
