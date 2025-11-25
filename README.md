@@ -3,7 +3,7 @@
 [![Unity Version](https://img.shields.io/badge/Unity-6000.0.37f1-blue.svg)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Create talking-photo experiences powered by Inworld's Voice Clone, TTS, and Node.js Runtime, combined with video generation from Runway ML. This template demonstrates two key features: an interactive Memory Companion and LipSync video generation.
+Create talking-photo experiences powered by Inworld's Voice Clone, TTS, and Unity Runtime, combined with video generation from Runway ML. This template demonstrates two key features: an interactive Memory Companion and LipSync video generation.
 
 ## Quick Links
 - [Overview](#overview)
