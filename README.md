@@ -117,33 +117,62 @@ Click the buttons to download:
 
 ## API Configuration Guide
 
-### 1. Inworld AI (Required)
+### 1. Inworld AI (Required for Both Scenes)
 
 **Get Your API Key:**
-1. Go to [studio.inworld.ai](https://studio.inworld.ai/)
-2. Sign up or log in
-3. Navigate to **Integrations** or **API Keys** section
-4. Create a new API key for Unity
-5. Copy and paste into Unity Inspector
+1. Go to [platform.inworld.ai](https://platform.inworld.ai/) and sign up or log in
+2. Navigate to your workspace
+3. Go to **Runtime** → **Get API Keys**
+4. Copy the API key
 
-### 2. Runway ML (Optional)
+**Configure Voice (Required):**
+1. Visit [Inworld Platform](https://platform.inworld.ai/)
+2. Navigate to your workspace → **TTS Playground**
+3. Use **Voice Clone** to create a custom voice or select a preset from the list
+4. Copy the **Voice ID** (you'll need this in Unity)
+
+**In Unity:**
+- Paste your **API Key** into the `APIController_Memory` or `APIController_Lipsync` component
+- Enter your **Voice ID** in the scene's voice input field
+
+---
+
+### 2. Runway ML API (Required for Memory Companion Scene)
 
 **Get Your API Key:**
-1. Go to [runwayml.com](https://runwayml.com/)
-2. Sign up and navigate to Settings > API Keys
-3. Create a new API key
-4. Paste into the `RunwayImageToVideo` component
+1. Go to [Runway ML Dev Portal](https://dev.runwayml.com/login) and create an account
+3. Create a new API key - see [Runway ML API Guide](https://docs.dev.runwayml.com/guides/using-the-api/)
+4. Copy the API key
 
-> **Note**: Runway ML credits are required for video generation. Each video generation consumes credits based on duration and quality.
+**In Unity:**
+- Open `Assets/Templates/Scenes/MemoryCompanion.unity`
+- Find the `RunwayImageToVideo` component in the scene
+- Paste your **Runway API Key**
 
-### 3. UseAPI.net (Optional)
+> **Note**: Runway ML credits are required for video generation. Each video consumes credits based on duration and quality.
 
-**Get Your API Token:**
-1. Go to [useapi.net](https://useapi.net/)
-2. Sign up and generate an API token
-3. Paste into the `APIController_Lipsync` component
+---
 
-> **Note**: UseAPI.net acts as a proxy service that simplifies calling Runway ML APIs.
+### 3. UseAPI.net + Runway ML (Required for Lip Sync Scene)
+
+**Get Your UseAPI Token:**
+1. Go to [UseAPI.net](https://useapi.net/) and sign up
+2. Navigate to **API Settings**
+3. Generate an API token
+4. Copy the token
+
+**Setup Runway ML Integration:**
+1. Go to [runwayml.com](https://runwayml.com/) and create an account
+2. Link your Runway ML email to UseAPI.net follow the [UseAPI & LipSync Setup Guide](https://useapi.net/docs/start-here/setup-runwayml)
+
+**In Unity:**
+- Open `Assets/Templates/Scenes/LipSync.unity`
+- Find the `APIController_Lipsync` component
+- Enter your **Inworld API Key**
+- Enter your **UseAPI Token**
+- Enter your **Runway ML Account Email** 
+
+> **Note**: UseAPI.net acts as a proxy service that simplifies calling Runway ML APIs for lip-sync generation.
 
 ---
 
