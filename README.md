@@ -1,9 +1,18 @@
 # Living Memories - Unity Template Project
 
 [![Unity Version](https://img.shields.io/badge/Unity-6000.0.37f1-blue.svg)](https://unity.com/)
-[![License](https://img.shields.io/badge/License-Inworld%20SDK-orange.svg)](https://www.inworld.ai/sdk-license)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 A Unity template project demonstrating AI-powered interactive memory companions using Inworld AI and Runway ML integrations.
+
+## Quick Links
+- [Overview](#overview)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [API Configuration](#api-configuration-guide)
+- [Template Documentation](#template-documentation)
+- [Troubleshooting](#troubleshooting)
+- [Support & Contact](#support--contact)
 
 ## Overview
 
@@ -59,7 +68,7 @@ The project includes two main template scenes located in `Assets/Templates/Scene
 #### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/LivingMemories.git
+git clone https://github.com/inworld-ai/living-memories-unity.git
 cd LivingMemories
 ```
 
@@ -269,30 +278,19 @@ This project uses the following Unity packages (defined in `Packages/manifest.js
 
 ## License
 
-### Inworld.ai SDK License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This project uses the Inworld AI SDK, which is governed by the **Inworld.ai Software Development Kit License Agreement**.
+**Copyright (c) 2025 Inworld AI**
 
-**Copyright 2022-2025 Theai, Inc. dba Inworld AI**
+### Third-Party Components
 
-Full license: [https://www.inworld.ai/sdk-license](https://www.inworld.ai/sdk-license)
+This project integrates with third-party services and SDKs:
 
-### Template Code
 
-The template code, scenes, and assets in `Assets/Templates/` are provided as examples. You are free to:
-- Use in commercial and non-commercial projects
-- Modify for your needs
-- Create derivative works
-
-**Conditions:**
-- Must comply with Inworld.ai SDK License for Inworld components
-- Must comply with terms of service for third-party APIs (Runway ML, UseAPI.net)
-- Attribution appreciated but not required
-
-### Third-Party Services
-
-- **Runway ML**: [Terms](https://runwayml.com/terms/) | [Privacy](https://runwayml.com/privacy/)
+- **Runway ML**: [Terms of Service](https://runwayml.com/terms/)
 - **UseAPI.net**: [Website](https://useapi.net/)
+
+When using this template, you must comply with the respective terms of service for each integrated service.
 
 ---
 
@@ -342,12 +340,5 @@ The template code, scenes, and assets in `Assets/Templates/` are provided as exa
 - **GitHub Issues**: [Report bugs or request features](https://github.com/inworld-ai/LivingMemories/issues)
 **General Questions**: For general inquiries and support, please email us at support@inworld.ai
 
----
 
-## Acknowledgments
-
-- **Inworld AI** for the powerful character AI SDK
-- **Runway ML** for image-to-video generation capabilities
-- **Unity Technologies** for the game engine
-- All contributors and testers
 

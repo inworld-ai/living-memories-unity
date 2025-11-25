@@ -101,3 +101,22 @@ InitTestScene*.unity*
 # Runtime dll files
 /[Aa]ssets/[Ii]nworldRuntime/Plugins/
 /[Aa]ssets/[Ss]treamingAssets/
+
+# Template debug/test files
+/[Aa]ssets/[Tt]emplates/[Dd]ebug/
+
+# Old pictures folder (moved to docs/images)
+/[Pp]ictures/
+
+# Mac specific
+.DS_Store
+**/.DS_Store
+
+# JetBrains Rider
+.idea/
+*.iml
+
+# API Keys and secrets
+**/secrets.json
+**/.env
+**/*.key

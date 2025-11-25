@@ -33,8 +33,8 @@ public class FlowController_MemoryCompanion : MonoBehaviour
     public DownloadAndPlayToRT videoplayer;
 
     [Header("UI - Input")]
-    [Tooltip("Image component displaying the uploaded photo")]
-    public Image inputTexture;
+    [Tooltip("RawImage component displaying the uploaded photo")]
+    public RawImage inputTexture;
     
     [Tooltip("Toggle to enable custom prompt input")]
     public Toggle useCustomizedPrompt;
@@ -67,6 +67,13 @@ public class FlowController_MemoryCompanion : MonoBehaviour
 
     #endregion
 
+    #region Constants
+
+    private const string ButtonTextSetup = "Setup";
+    private const string ButtonTextConnecting = "Connecting to memory channel...";
+
+    #endregion
+
     #region Unity Lifecycle
 
     /// <summary>
@@ -82,6 +89,12 @@ public class FlowController_MemoryCompanion : MonoBehaviour
         if (graphExecutor != null)
         {
             graphExecutor.OnGraphCompiled += OnGraphCompiled;
+        }
+        
+        // Setup Inworld controller listeners
+        if (InworldController.Instance != null)
+        {
+            InworldController.Instance.OnInitializedFailed += (name) => UpdateSetupButtonText(ButtonTextSetup);
         }
         
         // Setup custom prompt toggle
@@ -117,6 +130,12 @@ public class FlowController_MemoryCompanion : MonoBehaviour
             graphExecutor.OnGraphCompiled -= OnGraphCompiled;
         }
         
+        // Remove Inworld controller listeners
+        if (InworldController.Instance != null)
+        {
+            InworldController.Instance.OnInitializedFailed -= (name) => UpdateSetupButtonText(ButtonTextSetup);
+        }
+        
         // Remove custom prompt toggle listener
         if (useCustomizedPrompt != null)
         {
@@ -143,7 +162,7 @@ public class FlowController_MemoryCompanion : MonoBehaviour
         _isFirstTime = false;
 
         // Validate input texture
-        if (inputTexture == null || inputTexture.mainTexture == null)
+        if (inputTexture == null || inputTexture.texture == null)
         {
             Debug.LogError("Input texture is null. Please upload an image first.");
             _isFirstTime = true;
@@ -158,7 +177,7 @@ public class FlowController_MemoryCompanion : MonoBehaviour
         // Start video generation
         if (runwayImageToVideo != null && runwayImageToVideo.useRunwayGeneration)
         {
-            runwayImageToVideo.StartGeneration(prompt, (Texture2D)inputTexture.mainTexture, OnVideoGenerated);
+            runwayImageToVideo.StartGeneration(prompt, (Texture2D)inputTexture.texture, OnVideoGenerated);
         }
         else
         {
@@ -179,15 +198,8 @@ public class FlowController_MemoryCompanion : MonoBehaviour
             return;
         }
 
-        // Update button text
-        if (setup != null)
-        {
-            TMP_Text buttonText = setup.GetComponentInChildren<TMP_Text>();
-            if (buttonText != null)
-            {
-                buttonText.text = "Connecting to memory channel...";
-            }
-        }
+        // Update button text to connecting state
+        UpdateSetupButtonText(ButtonTextConnecting);
 
         // Set API key
         if (!string.IsNullOrEmpty(APIController_Memory.Instance.InworldAPIKey))
@@ -217,6 +229,21 @@ public class FlowController_MemoryCompanion : MonoBehaviour
         if (descriptionOfMemory != null)
         {
             descriptionOfMemory.interactable = isOn;
+        }
+    }
+
+    /// <summary>
+    /// Updates the setup button text.
+    /// </summary>
+    private void UpdateSetupButtonText(string text)
+    {
+        if (setup != null)
+        {
+            TMP_Text buttonText = setup.GetComponentInChildren<TMP_Text>();
+            if (buttonText != null)
+            {
+                buttonText.text = text;
+            }
         }
     }
 
@@ -260,6 +287,8 @@ public class FlowController_MemoryCompanion : MonoBehaviour
             return;
         }
         
+        // Reset button text 
+        UpdateSetupButtonText(ButtonTextSetup);
         Debug.LogError("Inworld AI initialization failed. Please check your API key and voice configuration.");
     }
     

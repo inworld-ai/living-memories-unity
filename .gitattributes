@@ -1,0 +1,70 @@
+# Unity YAML files - use Unity's merge tool
+*.mat merge=unityyamlmerge eol=lf
+*.anim merge=unityyamlmerge eol=lf
+*.unity merge=unityyamlmerge eol=lf
+*.prefab merge=unityyamlmerge eol=lf
+*.physicsMaterial2D merge=unityyamlmerge eol=lf
+*.physicMaterial merge=unityyamlmerge eol=lf
+*.asset merge=unityyamlmerge eol=lf
+*.meta merge=unityyamlmerge eol=lf
+*.controller merge=unityyamlmerge eol=lf
+
+# Normalize line endings
+* text=auto
+
+# Unity specific
+*.cs text diff=csharp
+*.cginc text
+*.shader text
+
+# Documentation
+*.md text
+*.txt text
+
+# Unity binary files
+*.cubemap binary
+*.unitypackage binary
+
+# Image formats
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.psd binary
+*.tga binary
+*.bmp binary
+*.exr binary
+*.hdr binary
+
+# Audio formats
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.aif binary
+*.aiff binary
+
+# Video formats
+*.mp4 binary
+*.mov binary
+*.avi binary
+*.webm binary
+
+# 3D models
+*.fbx binary
+*.obj binary
+*.max binary
+*.blend binary
+*.dae binary
+
+# Fonts
+*.ttf binary
+*.otf binary
+
+# Other binary formats
+*.dll binary
+*.so binary
+*.dylib binary
+*.exe binary
+*.a binary
+*.zip binary
+

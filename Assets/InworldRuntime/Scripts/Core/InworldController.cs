@@ -55,7 +55,10 @@ namespace Inworld.Framework
         
         public Action<int> OnProcessInitialized;
         public Action OnFrameworkInitialized;
-
+        
+        // Shuang added
+        public Action<string> OnInitializedFailed;
+        
         /// <summary>
         /// Set/Get DebugMode
         /// </summary>
@@ -264,6 +267,8 @@ namespace Inworld.Framework
                 if (!result)
                 {
                     Debug.LogError($"Module {module.GetType().Name} failed to initialize!");
+                    // Todo: Shuang added
+                    OnInitializedFailed?.Invoke($"{module.GetType().Name}");
                 }
             }
             if (results.All(r => r == true))
