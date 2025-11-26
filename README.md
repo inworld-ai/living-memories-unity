@@ -5,6 +5,12 @@
 
 Create talking-photo experiences powered by Inworld's Voice Clone, TTS, and Unity Runtime, combined with video generation from Runway ML. This template demonstrates two key features: an interactive Memory Companion and LipSync video generation.
 
+## Demo Video
+
+[![Living Memories Demo](https://img.youtube.com/vi/cnKbtMEywfQ/maxresdefault.jpg)](https://youtu.be/cnKbtMEywfQ)
+
+[Watch the demo video](https://youtu.be/cnKbtMEywfQ)
+
 ## Quick Links
 - [Overview](#overview)
 - [Features](#features)
