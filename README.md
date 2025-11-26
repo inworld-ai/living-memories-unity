@@ -1,4 +1,4 @@
-# Living Memories - Unity Template Project
+# Living Memories - Inworld Unity Runtime Demo
 
 [![Unity Version](https://img.shields.io/badge/Unity-6000.0.37f1-blue.svg)](https://unity.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
