@@ -15,6 +15,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Samples.Node
 {
+    // Input: InworldText
+    // Output: SafetyResult
+    
     /// <summary>
     /// Specialized node asset for content safety checking within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide content moderation and safety validation capabilities.

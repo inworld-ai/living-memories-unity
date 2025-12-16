@@ -32,6 +32,20 @@ namespace Inworld.Framework.Editor
             CreateGraphView();
             CreateToolbar();
             RestoreGraphOnCreateGUI();
+            RegisterHotKeys();
+        }
+
+        void RegisterHotKeys()
+        {
+            rootVisualElement.RegisterCallback<KeyDownEvent>(evt =>
+            {
+                // SaveGraph
+                if ((evt.ctrlKey || evt.commandKey) && evt.keyCode == KeyCode.S)
+                {
+                    SaveGraph();
+                    evt.StopPropagation();
+                }
+            });
         }
 
         void CreateGraphView()
@@ -60,27 +74,27 @@ namespace Inworld.Framework.Editor
             
             Button saveButton = new Button(() => SaveGraph())
             {
-                text = "Save",
+                text = "Save Graph",
                 style =
                 {
                     marginRight = 5
                 }
             };
 
-            Button loadButton = new Button(() => LoadGraph())
+            Button saveJsonButton = new Button(() => SaveGraph(true))
             {
-                text = "Load",
+                text = "Export Json (Experimental)",
                 style =
                 {
                     marginRight = 5
                 }
             };
             toolbar.Add(saveButton);
-            toolbar.Add(loadButton);
+            toolbar.Add(saveJsonButton);
             rootVisualElement.Add(toolbar);
         }
 
-        void SaveGraph()
+        void SaveGraph(bool saveAsJson = false)
         {
             if (m_GraphAsset == null) 
                 return;
@@ -104,26 +118,10 @@ namespace Inworld.Framework.Editor
                 if (!string.IsNullOrEmpty(guid))
                     EditorPrefs.SetString(k_LastGraphGuidKey, guid);
             }
-            if (!m_GraphAsset.NeedSaveAsJson) 
+            if (!saveAsJson) 
                 return;
             string outputPath = $"{dataDir}/{m_GraphAsset.Name}.json";
             m_GraphAsset.SaveJson(outputPath);
-            
-        }
-
-        void LoadGraph()
-        {
-            string path = EditorUtility.OpenFilePanel("Load Graph", "Assets", "asset");
-            if (string.IsNullOrEmpty(path)) 
-                return;
-            path = FileUtil.GetProjectRelativePath(path);
-            m_GraphAsset = AssetDatabase.LoadAssetAtPath<InworldGraphAsset>(path);
-            if (m_GraphAsset == null) 
-                return;
-            m_GraphView.LoadGraph(m_GraphAsset);
-            string guid = AssetDatabase.AssetPathToGUID(path);
-            if (!string.IsNullOrEmpty(guid))
-                EditorPrefs.SetString(k_LastGraphGuidKey, guid);
         }
 
         public void SetGraphAsset(InworldGraphAsset graphAsset)

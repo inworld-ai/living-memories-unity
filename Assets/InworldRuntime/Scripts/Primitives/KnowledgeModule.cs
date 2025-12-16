@@ -4,16 +4,15 @@
  * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
  * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
  *************************************************************************************************/
-
 using System;
 using System.Collections.Generic;
+using Inworld.Framework.Attributes;
 using Inworld.Framework.Event;
 using Inworld.Framework.Knowledge;
 using Inworld.Framework.TextEmbedder;
-using Inworld.Framework.Node;
 using UnityEngine;
-
 using Util = Inworld.Framework.InworldFrameworkUtil;
+
 
 namespace Inworld.Framework.Primitive
 {
@@ -22,6 +21,7 @@ namespace Inworld.Framework.Primitive
     /// Provides functionality for compiling, storing, and querying knowledge content for AI interactions.
     /// Integrates with text embedding services for semantic search and knowledge matching.
     /// </summary>
+    [ModelType("Remote", ExcludeTargets = new[] { "StandaloneWindows", "StandaloneWindows64" })]
     public class KnowledgeModule : InworldFrameworkModule
     {
         [SerializeField] int m_MaxCharsPerChunk = 200;

@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53cc2c17147d477fb96fb3fb9e9f6114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModelType: 1
+  m_ModelType: 0
+  m_RemoteProvider: inworld
+  m_RemoteModelName: BAAI/bge-large-en-v1.5

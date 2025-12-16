@@ -20,10 +20,17 @@ namespace Inworld
     {
         const string k_PluginsPath = "Assets/InworldRuntime/Plugins";
         const string k_StreamingAssetsPath = "Assets/StreamingAssets";
-
+        const string k_ConfigAssetPath = "Assets/InworldRuntime/Resources/InworldRuntime.asset";
+        const string k_APIKeyInstruction =
+            "Please enter your Inworld API key here.\nYou can find it in https://platform.inworld.ai's Get API Key.";
         const string k_PluginDownloadUrl =
-            "https://storage.googleapis.com/assets-inworld-ai/unity-packages/Plugins_250815.zip";
+            "https://storage.googleapis.com/assets-inworld-ai/unity-packages/Plugins_251204.zip";
         const string k_StreamingAssetsDownloadUrl = "https://storage.googleapis.com/assets-inworld-ai/unity-packages/StreamingAssets.zip";
+
+        bool m_HasValidApiKey;
+        string m_ApiKeyInput;
+        bool m_Initialized;
+        UnityEngine.Object m_ConfigObject;
 
         public static void ShowWindow()
         {
@@ -33,8 +40,40 @@ namespace Inworld
             window.ShowUtility();
         }
 
+        void OnEnable()
+        {
+            InitializeState();
+        }
+
+        void InitializeState()
+        {
+            m_Initialized = true;
+            m_ConfigObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(k_ConfigAssetPath);
+            if (!m_ConfigObject)
+            {
+                // If the config asset is missing, do not block the dependency download step. Just skip the API key wizard.
+                m_HasValidApiKey = true;
+                return;
+            }
+
+            SerializedObject serializedConfig = new SerializedObject(m_ConfigObject);
+            SerializedProperty apiKeyProp = serializedConfig.FindProperty("m_APIKey");
+            m_ApiKeyInput = apiKeyProp != null ? apiKeyProp.stringValue : string.Empty;
+            m_HasValidApiKey = !string.IsNullOrEmpty(m_ApiKeyInput);
+        }
+
         async void OnGUI()
         {
+            if (!m_Initialized)
+                InitializeState();
+
+            // Ensure API key is present; otherwise, show the input flow.
+            if (!m_HasValidApiKey)
+            {
+                DrawApiKeyStep();
+                return;
+            }
+
             bool missingPlugins = !Directory.Exists(k_PluginsPath);
             bool missingStreaming = !Directory.Exists(k_StreamingAssetsPath);
             EditorGUILayout.Space(4);
@@ -80,6 +119,64 @@ namespace Inworld
             {
                 DrawStatusRow("Assets/InworldRuntime/Plugins", !missingPlugins);
                 DrawStatusRow("Assets/StreamingAssets", !missingStreaming);
+            }
+        }
+
+        void DrawApiKeyStep()
+        {
+            EditorGUILayout.Space(8);
+            EditorGUILayout.LabelField("Inworld API Key", EditorStyles.boldLabel);
+            EditorGUILayout.Space(4);
+
+            EditorGUILayout.HelpBox(k_APIKeyInstruction, MessageType.Info);
+
+            EditorGUILayout.Space(6);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.Label("API Key", GUILayout.Width(70));
+                m_ApiKeyInput = EditorGUILayout.TextField(m_ApiKeyInput ?? string.Empty);
+            }
+
+            EditorGUILayout.Space(10);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.FlexibleSpace();
+
+                if (GUILayout.Button("Next", GUILayout.Width(100), GUILayout.Height(28)))
+                {
+                    string trimmed = (m_ApiKeyInput ?? string.Empty).Trim();
+                    if (string.IsNullOrEmpty(trimmed))
+                    {
+                        EditorUtility.DisplayDialog("API Key Required",
+                            "Please enter a valid Inworld API key.", "OK");
+                    }
+                    else
+                    {
+                        if (m_ConfigObject)
+                        {
+                            SerializedObject serializedConfig = new SerializedObject(m_ConfigObject);
+                            SerializedProperty apiKeyProp = serializedConfig.FindProperty("m_APIKey");
+                            if (apiKeyProp != null)
+                            {
+                                serializedConfig.Update();
+                                apiKeyProp.stringValue = trimmed;
+                                serializedConfig.ApplyModifiedProperties();
+                                EditorUtility.SetDirty(m_ConfigObject);
+                                AssetDatabase.SaveAssets();
+                                AssetDatabase.Refresh();
+                            }
+                        }
+                        m_HasValidApiKey = true;
+                        Repaint();
+                    }
+                }
+
+                if (GUILayout.Button("Cancel", GUILayout.Width(100), GUILayout.Height(28)))
+                {
+                    Close();
+                }
             }
         }
 

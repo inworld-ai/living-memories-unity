@@ -12,16 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d37f36cd96e4825912fc6635d3b8a71, type: 3}
   m_Name: Node_SafetySample
   m_EditorClassIdentifier: 
+  m_Component: {fileID: 0}
   m_NodeName: SafetyNode
-  m_NodeType: 0
   m_CreationConfigAsset: {fileID: 0}
   m_InputTypes: []
   m_OutputType: 
-  m_Graph: {fileID: 0}
-  m_ParentNodes: []
-  m_ChildrenNodes: []
   m_BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_EditorPosition: {x: 0, y: 0}
+  m_Graph: {fileID: 11400000, guid: ef26f893f303a2b43b17fb11fa14c548, type: 2}
+  m_ParentNodes: []
+  m_ChildrenNodes: []
+  m_CreationConfigData:
+    type: 
+    properties:
+      embedderComponentID: 
+      safetyConfig:
+        modelWeightsPath: '{{SAFETY_MODEL_PATH}}'
+  m_ExeConfigData:
+    type: 
   m_SafetyData:
   - topic: 3
     threshold: 0.3

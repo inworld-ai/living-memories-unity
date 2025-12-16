@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 
 namespace Inworld.Framework.Samples.Node
 {
+    // Input: InworldText or LLMChatResponse
+    // Output: LLMChatRequest or InworldError
+    
     /// <summary>
     /// Custom node asset for formatting conversation prompts using Jinja templating.
     /// Processes character conversation data through template rendering to create structured LLM chat requests.

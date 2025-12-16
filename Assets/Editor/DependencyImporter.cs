@@ -26,8 +26,7 @@ namespace Inworld
 
         
         static readonly string[] s_DependentPackages = {
-            "com.unity.nuget.newtonsoft-json",
-            "com.unity.cloud.gltfast"
+            "com.unity.nuget.newtonsoft-json"
         };
         
         static DependencyImporter()

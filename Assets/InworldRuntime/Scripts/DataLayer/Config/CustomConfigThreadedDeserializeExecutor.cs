@@ -9,7 +9,7 @@ namespace Inworld.Framework
         ProcessBaseDataIODelegateExecutionID m_Func;
         public CustomConfigThreadedDeserializeExecutor(ProcessBaseDataIODelegateExecutionID func)
         {
-            m_Self = GCHandle.Alloc(this, GCHandleType.Pinned);
+            m_Self = GCHandle.Alloc(this);
             m_Func = func;
             IntPtr funcPtr = Marshal.GetFunctionPointerForDelegate(func);
             m_DLLPtr = MemoryManager.Register(

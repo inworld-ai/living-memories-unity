@@ -12,6 +12,9 @@ using Inworld.Framework.Primitive;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: LLMChatRequest
+    // Output: LLMChatResponse
+    
     /// <summary>
     /// Specialized node asset for Large Language Model (LLM) operations within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide AI text generation and language processing capabilities.

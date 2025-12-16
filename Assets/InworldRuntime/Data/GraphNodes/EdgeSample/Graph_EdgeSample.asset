@@ -14,10 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PlayerName: Player
   m_GraphName: New Graph
+  m_GraphJson: {fileID: 0}
+  m_UserData: {fileID: 0}
+  m_Components: []
   m_Nodes:
   - {fileID: 11400000, guid: c8a39cf4a0ff45c4ba97417de44f2857, type: 2}
   - {fileID: 11400000, guid: 45e8edb35d9fe364baaa3e92c22d1d0b, type: 2}
   m_StartNode: {fileID: 11400000, guid: c8a39cf4a0ff45c4ba97417de44f2857, type: 2}
   m_EndNode: {fileID: 11400000, guid: 45e8edb35d9fe364baaa3e92c22d1d0b, type: 2}
+  m_EndNodes:
+  - {fileID: 11400000, guid: 45e8edb35d9fe364baaa3e92c22d1d0b, type: 2}
   m_Edges:
   - {fileID: 11400000, guid: b08c2d03517b6ba4fb8e55c39987d1d9, type: 2}

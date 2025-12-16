@@ -4,14 +4,14 @@
  * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
  * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
  *************************************************************************************************/
-
 using System;
 using System.Collections.Generic;
-
+using Inworld.Framework.Attributes;
 using Inworld.Framework.Node;
 using Inworld.Framework.Safety;
 using Inworld.Framework.TextEmbedder;
 using UnityEngine;
+
 
 namespace Inworld.Framework.Primitive
 {
@@ -39,14 +39,10 @@ namespace Inworld.Framework.Primitive
     /// Provides real-time content analysis to detect potentially harmful or inappropriate content.
     /// Integrates with text embedding services for advanced semantic analysis of user inputs and AI responses.
     /// </summary>
+    [ModelType("LocalCPU", LockAlways = true)]
     public class InworldSafetyModule : InworldFrameworkModule
     {
         [SerializeField] List<SafetyThreshold> m_SafetyData = new List<SafetyThreshold>();
-        [Header("Remote:")] 
-        [SerializeField] string m_Provider;
-        [SerializeField] string m_ModelName;
-        [Header("Local")]
-        [SerializeField] string m_ModelPath;
         
         SafetyConfig m_SafetyConfig;
         
@@ -71,7 +67,11 @@ namespace Inworld.Framework.Primitive
             InworldController.Safety.SetupEmbedder(InworldController.TextEmbedder.Interface as TextEmbedderInterface);
 
             SafetyCheckerCreationConfig config = new SafetyCheckerCreationConfig();
+#if UNITY_ANDROID
+            config.ModelPath = $"{Application.persistentDataPath}/{InworldFrameworkUtil.SafetyWeightPath}";
+#else
             config.ModelPath = $"{Application.streamingAssetsPath}/{InworldFrameworkUtil.SafetyWeightPath}";
+#endif
             return config;
         }
 

@@ -19,11 +19,6 @@ namespace Inworld.Framework.Audio
     {
         [SerializeField] KeyCode m_PushToTalkKey = KeyCode.Space;
 
-        void Awake()
-        {
-
-        }
-
         /// <summary>
         /// Monitors for push-to-talk key input and controls audio transmission accordingly.
         /// The player is considered to be speaking only when the configured key is being pressed.

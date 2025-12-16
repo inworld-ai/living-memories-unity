@@ -156,7 +156,6 @@ namespace Inworld.Framework.Samples.Node
                 List<float> data = chunk.Waveform?.ToList();
                 if (data != null && data.Count > 0)
                     result.AddRange(data);
-                await Awaitable.NextFrameAsync();
             }
             await Awaitable.MainThreadAsync();
             string output = $"SampleRate: {sampleRate} Sample Count: {result.Count}";

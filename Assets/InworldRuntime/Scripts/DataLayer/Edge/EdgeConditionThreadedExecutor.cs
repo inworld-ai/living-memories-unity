@@ -24,7 +24,7 @@ namespace Inworld.Framework.Edge
         /// <param name="func">The delegate function to execute for condition evaluation.</param>
         public EdgeConditionThreadedExecutor(ProcessBaseDataIODelegate func)
         {
-            m_Self = GCHandle.Alloc(this, GCHandleType.Pinned);
+            m_Self = GCHandle.Alloc(this);
             IntPtr funcPtr = Marshal.GetFunctionPointerForDelegate(func);
             IntPtr selfPtr = GCHandle.ToIntPtr(m_Self);
             m_DLLPtr = MemoryManager.Register(

@@ -27,7 +27,7 @@ namespace Inworld.Framework.Node
         /// <param name="func">The delegate function to execute for custom node processing.</param>
         public CustomNodeThreadedProcessExecutor(ProcessBaseDataIODelegate func)
         {
-            m_Self = GCHandle.Alloc(this, GCHandleType.Pinned);
+            m_Self = GCHandle.Alloc(this);
             m_Func = func;
             IntPtr funcPtr = Marshal.GetFunctionPointerForDelegate(func);
             m_DLLPtr = MemoryManager.Register(InworldInterop.inworld_CustomNodeThreadedProcessExecutor_new(GCHandle.ToIntPtr(m_Self), funcPtr),

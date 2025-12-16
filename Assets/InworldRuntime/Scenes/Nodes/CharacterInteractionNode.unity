@@ -171,6 +171,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TextEmbedder
       objectReference: {fileID: 0}
+    - target: {fileID: 7421522065197359232, guid: 1366950287bb85b4aaaaa94e6f3472d9, type: 3}
+      propertyPath: m_ModelType
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -491,11 +495,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e045c3fe583c45fcbb3c5d16c9b94bba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModelType: 0
+  m_ModelType: 2
   m_SafetyData: []
-  m_Provider: 
-  m_ModelName: 
-  m_ModelPath: 
 --- !u!1001 &837234021
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -550,7 +551,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8697944352784583234, guid: f361cc28adccb4e40ac15e40d04f2753, type: 3}
       propertyPath: m_ModelType
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -581,6 +582,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1149340113}
     m_Modifications:
+    - target: {fileID: 6947823026367664264, guid: 75da916aca09eb841bba3b933982570d, type: 3}
+      propertyPath: m_Threshold
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 8316710719091136802, guid: 75da916aca09eb841bba3b933982570d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1389,7 +1394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5636127803035629571, guid: 52d79298ead8f7a489c83bfbdb725edd, type: 3}
       propertyPath: m_ModelType
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

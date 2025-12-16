@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Samples.Node
 {
+    // Input: InworldText
+    // Output: InworldText
+    
     /// <summary>
     /// Custom node asset that serves as an endpoint for character conversation flows.
     /// Formats final output by prefixing text with the appropriate speaker name.

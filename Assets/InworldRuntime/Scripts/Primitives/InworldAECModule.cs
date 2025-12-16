@@ -6,7 +6,7 @@
  *************************************************************************************************/
 
 using Inworld.Framework.AEC;
-using Inworld.Framework.Node;
+using Inworld.Framework.Attributes;
 
 
 namespace Inworld.Framework.Primitive
@@ -17,6 +17,7 @@ namespace Inworld.Framework.Primitive
     /// Uses CPU-based local processing only and does not support remote operation.
     /// Essential for clear audio communication in applications with both input and output audio.
     /// </summary>
+    [ModelType("LocalCPU", LockAlways = true)]
     public class InworldAECModule : InworldFrameworkModule
     {
         void Awake()

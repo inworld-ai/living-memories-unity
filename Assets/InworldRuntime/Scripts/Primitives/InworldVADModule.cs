@@ -4,10 +4,10 @@
  * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
  * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
  *************************************************************************************************/
-
+using Inworld.Framework.Attributes;
 using Inworld.Framework.VAD;
-using Inworld.Framework.Node;
 using UnityEngine;
+
 
 namespace Inworld.Framework.Primitive
 {
@@ -17,6 +17,7 @@ namespace Inworld.Framework.Primitive
     /// Used for optimizing speech processing by filtering out non-speech audio segments.
     /// Note: Only supports local model execution; remote VAD is not available.
     /// </summary>
+    [ModelType("LocalCPU", LockAlways = true)]
     public class InworldVADModule : InworldFrameworkModule
     {
         [Range(0, 1)] [SerializeField] float m_Threshold = 0.3f;

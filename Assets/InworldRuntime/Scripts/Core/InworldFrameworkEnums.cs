@@ -246,14 +246,4 @@ namespace Inworld.Framework
         /// </summary>
         Others = 20
     }
-
-    public enum GraphEvent
-    {
-        None,
-        Initializing,
-        RegisterConfig,
-        RegisterEdge,
-        RegisterCustomNode,
-        Initialized,
-    }
 }

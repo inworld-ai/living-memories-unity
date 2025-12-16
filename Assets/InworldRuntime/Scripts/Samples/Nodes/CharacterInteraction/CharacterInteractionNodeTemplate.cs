@@ -88,24 +88,22 @@ namespace Inworld.Framework.Samples.Node
 
             int sampleRate = 0;
             float[] finalData = null;
-            await Task.Run(() =>
+            List<float> buffer = new List<float>(64 * 1024);
+            await Awaitable.BackgroundThreadAsync();
+            while (stream != null && stream.HasNext)
             {
-                List<float> buffer = new List<float>(64 * 1024);
-                while (stream != null && stream.HasNext)
-                {
-                    TTSOutput ttsOutput = stream.Read();
-                    if (ttsOutput == null) continue;
-                    InworldAudio ttsOutputAudio = ttsOutput.Audio;
-                    sampleRate = ttsOutputAudio.SampleRate;
-                    List<float> wf = ttsOutputAudio.Waveform?.ToList();
-                    if (wf != null && wf.Count > 0)
-                        buffer.AddRange(wf);
-                }
-                finalData = buffer.Count > 0 ? buffer.ToArray() : null;
-            });
-
-            if (sampleRate <= 0 || finalData == null || finalData.Length == 0) return;
+                TTSOutput ttsOutput = stream.Read();
+                if (ttsOutput == null) continue;
+                InworldAudio ttsOutputAudio = ttsOutput.Audio;
+                sampleRate = ttsOutputAudio.SampleRate;
+                List<float> wf = ttsOutputAudio.Waveform?.ToList();
+                if (wf != null && wf.Count > 0)
+                    buffer.AddRange(wf);
+            }
             await Awaitable.MainThreadAsync();
+            finalData = buffer.Count > 0 ? buffer.ToArray() : null;
+            if (sampleRate <= 0 || finalData == null || finalData.Length == 0) 
+                return;
             AudioClip clip = AudioClip.Create("TTS", finalData.Length, 1, sampleRate, false);
             clip.SetData(finalData, 0);
             m_AudioSource?.PlayOneShot(clip);
@@ -123,7 +121,7 @@ namespace Inworld.Framework.Samples.Node
                 agentName = m_CharacterName,
                 utterance = content
             };
-            if(m_BubbleLeft != null)
+            if (m_BubbleLeft)
                 InsertBubble(m_BubbleLeft, utterance);
         }
         
@@ -166,7 +164,7 @@ namespace Inworld.Framework.Samples.Node
         
         async void SendAudio(List<float> audioData)
         {
-            if (InworldController.STT)
+            if (m_InworldGraphExecutor.Graph.IsJsonInitialized || InworldController.STT)
             {
                 InworldVector<float> floatArray = new InworldVector<float>();
                 foreach (float data in audioData)
@@ -175,7 +173,6 @@ namespace Inworld.Framework.Samples.Node
                 }
 
                 InworldAudio audio = new InworldAudio(floatArray, 16000);
-                //Debug.LogWarning("SampleRate: " + audio.SampleRate + ' ' + audio.Waveform.Size);
                 await m_InworldGraphExecutor.ExecuteGraphAsync("Audio", audio);
             }
         }
@@ -205,7 +202,7 @@ namespace Inworld.Framework.Samples.Node
                 agentName = InworldFrameworkUtil.PlayerName,
                 utterance = content
             };
-            if(m_BubbleRight != null)   
+            if(m_BubbleRight)
                 InsertBubble(m_BubbleRight, utterance);
         }
     }

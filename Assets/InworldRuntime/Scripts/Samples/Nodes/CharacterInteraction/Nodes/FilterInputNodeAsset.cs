@@ -10,10 +10,14 @@ using UnityEngine;
 
 namespace Inworld.Framework.Samples.Node
 {
+    // Input: InworldText or InworldAudio
+    // Output: InworldText or InworldAudio or InworldError
+    
     // YAN: This is the first node of the Character interaction graph.
     //      Input: Audio or Text
     //      Output: If Audio, Send to STT. If Text, directly return as output.
     //      Next Node: Attach the message to the prompt.
+    
     /// <summary>
     /// Custom node asset that serves as the entry point for character interaction graphs.
     /// Filters and validates input data, supporting both audio and text inputs.

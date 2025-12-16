@@ -12,6 +12,7 @@ namespace Inworld.Framework.Samples.Node
 {
     // Input: None. Previous Node's input (if exists) would be discarded.
     // Output: InworldText with the current Player's name in the graph.
+    
     /// <summary>
     /// Custom node asset that provides the current player's name as output.
     /// Ignores any input data and returns the framework's configured player name.

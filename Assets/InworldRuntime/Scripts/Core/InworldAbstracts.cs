@@ -18,8 +18,19 @@ namespace Inworld.Framework
     public abstract class InworldFrameworkDllClass : IDisposable
     {
         protected IntPtr m_DLLPtr;
+        /// <summary>
+        /// Gets the underlying native pointer associated with this managed wrapper.
+        /// </summary>
+        /// <value>The <see cref="IntPtr"/> to the native object.</value>
         public IntPtr ToDLL => m_DLLPtr;
+        /// <summary>
+        /// Gets a value indicating whether the native pointer is valid (non-zero).
+        /// </summary>
+        /// <value><c>true</c> if the native pointer is non-zero; otherwise, <c>false</c>.</value>
         public virtual bool IsValid => m_DLLPtr != IntPtr.Zero;
+        /// <summary>
+        /// Releases unmanaged resources by unregistering the native pointer from the memory manager.
+        /// </summary>
         public virtual void Dispose() => MemoryManager.UnRegister(m_DLLPtr);
     }
     
@@ -37,8 +48,20 @@ namespace Inworld.Framework
     /// </summary>
     public abstract class InworldRemover : InworldFrameworkDllClass
     {
+        /// <summary>
+        /// Gets a value indicating whether there is another filtered item available.
+        /// </summary>
+        /// <value><c>true</c> if more items can be read; otherwise, <c>false</c>.</value>
         public abstract bool HasNext { get; }
+        /// <summary>
+        /// Gets the current filtered text result.
+        /// </summary>
+        /// <value>The filtered string produced by the remover.</value>
         public abstract string Result { get; }
+        /// <summary>
+        /// Creates an input stream view over this remover that yields string results.
+        /// </summary>
+        /// <value>An <see cref="InworldInputStream{T}"/> that streams <see cref="string"/> values.</value>
         public InworldInputStream<string> ToInputStream => new InworldInputStream<string>(m_DLLPtr);
     }
     
@@ -47,6 +70,11 @@ namespace Inworld.Framework
     /// </summary>
     public abstract class InworldFactory : InworldFrameworkDllClass
     {
+        /// <summary>
+        /// Creates a new interface instance using the specified configuration.
+        /// </summary>
+        /// <param name="config">The configuration used to initialize the interface.</param>
+        /// <returns>An initialized <see cref="InworldInterface"/>.</returns>
         public abstract InworldInterface CreateInterface(InworldConfig config);
     }
     

@@ -4,12 +4,11 @@
  * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
  * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
  *************************************************************************************************/
-
-using System;
+using Inworld.Framework.Attributes;
 using Inworld.Framework.STT;
-using Inworld.Framework.Node;
 using Util = Inworld.Framework.InworldFrameworkUtil;
 using UnityEngine;
+
 
 namespace Inworld.Framework.Primitive
 {
@@ -18,6 +17,7 @@ namespace Inworld.Framework.Primitive
     /// Converts audio input into text transcriptions using AI-powered speech recognition.
     /// Supports both synchronous and asynchronous speech recognition operations.
     /// </summary>
+    [ModelType("Remote", ExcludeTargets = new[] { "StandaloneWindows", "StandaloneWindows64" })]
     public class InworldSTTModule : InworldFrameworkModule
     {
         SpeechRecognitionConfig m_SpeechRecognitionConfig;
@@ -74,11 +74,12 @@ namespace Inworld.Framework.Primitive
                 return result;
             }
             NotifyTaskStart();
+            await Awaitable.BackgroundThreadAsync();
             while (m_InputStream != null && m_InputStream.HasNext)
             {
                 result += m_InputStream.Read();
-                await Awaitable.NextFrameAsync();
             }
+            await Awaitable.MainThreadAsync();
             NotifyTaskEnd(result);
             Debug.Log(result);
             return result;

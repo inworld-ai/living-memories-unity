@@ -122,7 +122,30 @@ namespace Inworld.Framework.Editor
             return node;
         }
         
-
+        InworldNodeView InstantiateNodeViewForAssetType(Type assetType)
+        {
+            if (assetType == null)
+                return new InworldNodeView();
+            // Hard mapping of NodeAsset -> NodeView subclasses
+            if (typeof(AddSpeechEventNodeAsset).IsAssignableFrom(assetType))
+                return new AddSpeechEventNodeView();
+            if (typeof(ConversationEndpointNodeAsset).IsAssignableFrom(assetType))
+                return new ConversationEndpointNodeView();
+            if (typeof(TTSNodeAsset).IsAssignableFrom(assetType))
+                return new TTSNodeView();
+            return new InworldNodeView();
+        }
+        
+        public InworldNodeView CreateNodeForAsset(InworldNodeAsset asset, Vector2 position)
+        {
+            InworldNodeView node = InstantiateNodeViewForAssetType(asset?.GetType());
+            node.Initialize(position);
+            AddElement(node);
+            AttachEdgeConnectors(node);
+            if (asset)
+                node.LoadFromAsset(m_GraphAsset, asset);
+            return node;
+        }
 
         public void SetStartNode(InworldNodeView newStartNode)
         {
@@ -130,8 +153,6 @@ namespace Inworld.Framework.Editor
                 return;
             InworldNodeView oldStartNodeView = FindNodeViewByAsset(m_GraphAsset.StartNode);
             m_GraphAsset.StartNode = newStartNode.NodeAsset;
-            oldStartNodeView?.UpdateNodeTitle();
-            newStartNode.UpdateNodeTitle();
         }
 
         public void AddEndNode(InworldNodeView endNode)
@@ -141,7 +162,6 @@ namespace Inworld.Framework.Editor
             if (!m_GraphAsset.EndNodes.Contains(endNode.NodeAsset))
             {
                 m_GraphAsset.EndNodes.Add(endNode.NodeAsset);
-                endNode.UpdateNodeTitle();
             }
         }
 
@@ -149,7 +169,6 @@ namespace Inworld.Framework.Editor
         {
             if (m_GraphAsset == null) return;
             m_GraphAsset.EndNodes.Remove(endNode.NodeAsset);
-            endNode.UpdateNodeTitle();
         }
 
         InworldNodeView FindNodeViewByAsset(InworldNodeAsset nodeAsset)
@@ -168,13 +187,22 @@ namespace Inworld.Framework.Editor
 
             ClearGraph();
             m_GraphAsset = graphAsset;
+            if (m_GraphAsset.Nodes != null && m_GraphAsset.Nodes.Count > 0)
+            {
+                List<InworldNodeAsset> uniqueNodes = m_GraphAsset.Nodes.Distinct().ToList();
+                if (uniqueNodes.Count != m_GraphAsset.Nodes.Count)
+                {
+                    m_GraphAsset.Nodes.Clear();
+                    m_GraphAsset.Nodes.AddRange(uniqueNodes);
+                    UnityEditor.EditorUtility.SetDirty(m_GraphAsset);
+                }
+            }
             for (int i = 0; i < graphAsset.Nodes.Count; i++)
             {
                 Vector2 position = graphAsset.Nodes[i].EditorPosition != Vector2.zero
                     ? graphAsset.Nodes[i].EditorPosition
                     : SetNextPosition(graphAsset.Nodes[i], i);
-                InworldNodeView node = CreateNode(position);
-                node.LoadFromAsset(graphAsset, graphAsset.Nodes[i]);
+                CreateNodeForAsset(graphAsset.Nodes[i], position);
             }
 
             for (int i = 0; i < graphAsset.Edges.Count; i++)
@@ -205,10 +233,6 @@ namespace Inworld.Framework.Editor
                 };
                 edge.LoadFromAsset(graphAsset, edgeAsset);
                 AddElement(edge);
-            }
-            foreach (InworldNodeView nodeView in nodes.Cast<InworldNodeView>())
-            {
-                nodeView.UpdateNodeTitle();
             }
         }
 
@@ -293,11 +317,6 @@ namespace Inworld.Framework.Editor
             {
                 graphAsset.EndNodes.Add(n);
             }
-
-	        foreach (InworldNodeView nodeView in nodes.Cast<InworldNodeView>())
-	        {
-		        nodeView?.UpdateNodeTitle();
-	        }
         }
 
         void SaveEdges(InworldGraphAsset graphAsset)

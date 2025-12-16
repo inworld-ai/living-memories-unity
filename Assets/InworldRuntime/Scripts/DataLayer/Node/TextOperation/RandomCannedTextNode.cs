@@ -16,7 +16,6 @@ namespace Inworld.Framework.Node
     /// </summary>
     public class RandomCannedTextNode : InworldNode
     {
-        // TODO(Yan): Now RandomCannedTextNode_Create requires inworld_RandomCannedTextNodeExecutionConfig. So to others.
         /// <summary>
         /// Initializes a new instance of the RandomCannedTextNode class with predefined text options.
         /// Creates a node that can randomly select from the provided text collection.

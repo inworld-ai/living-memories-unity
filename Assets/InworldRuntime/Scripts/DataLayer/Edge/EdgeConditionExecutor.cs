@@ -29,7 +29,7 @@ namespace Inworld.Framework.Edge
         /// <param name="data">User data to be passed to the callback function.</param>
         public EdgeConditionExecutor(ProcessBaseDataIODelegate func, object data)
         {
-            m_Self = GCHandle.Alloc(data, GCHandleType.Pinned);
+            m_Self = GCHandle.Alloc(data);
             IntPtr funcPtr = Marshal.GetFunctionPointerForDelegate(func);
             IntPtr selfPtr = GCHandle.ToIntPtr(m_Self);
             m_DLLPtr = MemoryManager.Register(

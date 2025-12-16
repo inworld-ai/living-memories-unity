@@ -13,6 +13,9 @@ using Inworld.Framework.Node;
 
 namespace Inworld.Framework.Samples.Node
 {
+    // Input: InworldText or InworldAudio
+    // Output: InworldText or InworldAudio or InworldError
+    
     /// <summary>
     /// Sample custom node asset demonstrating basic data processing capabilities within the Inworld framework.
     /// Processes both text and audio inputs with simple transformations (text to uppercase, audio volume reduction).

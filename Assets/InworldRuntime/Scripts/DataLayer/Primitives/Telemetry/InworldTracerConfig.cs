@@ -14,7 +14,7 @@ namespace Inworld.Framework.Telemetry
     /// Defines tracing parameters such as sampling rates for performance monitoring.
     /// Used for configuring how distributed traces are collected and sampled across system operations.
     /// </summary>
-    public class InworldTracerConfig : InworldFrameworkDllClass
+    public class InworldTracerConfig : InworldConfig
     {
         /// <summary>
         /// Initializes a new instance of the InworldTracerConfig class with default settings.

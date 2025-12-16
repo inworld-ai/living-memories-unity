@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: InworldDataStream<string>
+    // Output: InworldText
+    
     /// <summary>
     /// Specialized node asset for text aggregation operations within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide text collection and consolidation capabilities.
@@ -18,8 +21,6 @@ namespace Inworld.Framework.Graph
     /// This asset can be created through Unity's Create menu and used to combine multiple text streams into single text objects.
     /// Used for implementing text consolidation, stream-to-text conversion, and text data aggregation in AI workflows.
     /// </summary>
-    // Input: InworldDataStream<string>
-    // Output: InworldText
     [CreateAssetMenu(fileName = "Node_TextAggregator", menuName = "Inworld/Create Node/Text Operation/Text Aggregator", order = -2499)]
     public class TextAggregatorNodeAsset : InworldNodeAsset
     {

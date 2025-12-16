@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: InworldText or InworldDataStream<string>
+    // Output: InworldDataStream<string>
+    
     /// <summary>
     /// Specialized node asset for text chunking operations within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide text segmentation and division capabilities.
@@ -18,8 +21,6 @@ namespace Inworld.Framework.Graph
     /// This asset can be created through Unity's Create menu and used to break down large text into manageable chunks.
     /// Used for implementing text segmentation, content division, and text stream processing in AI workflows.
     /// </summary>
-    // Input: InworldText or InworldDataStream<string>
-    // Output: InworldDataStream<string>
     [CreateAssetMenu(fileName = "Node_TextChunking", menuName = "Inworld/Create Node/Text Operation/Text Chunking", order = -2498)]
     public class TextChunkingNodeAsset : InworldNodeAsset
     {

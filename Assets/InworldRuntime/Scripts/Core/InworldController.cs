@@ -8,6 +8,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
+using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading.Tasks;
 using Inworld.Framework.Audio;
 using Inworld.Framework.Primitive;
 using UnityEngine;
@@ -58,7 +63,7 @@ namespace Inworld.Framework
         
         // Shuang added
         public Action<string> OnInitializedFailed;
-        
+
         /// <summary>
         /// Set/Get DebugMode
         /// </summary>
@@ -223,15 +228,43 @@ namespace Inworld.Framework
             }
         }
         
+        async Task<string> FetchPemAsync(string host)
+        {
+            using var tcp = new TcpClient();
+            await tcp.ConnectAsync(host, 443);
+            string pem = null;
+            using var ssl = new SslStream(tcp.GetStream(), false,
+                (s, cert, chain, errors) =>
+                {
+                    var sb = new StringBuilder();
+                    foreach (var element in chain.ChainElements)
+                    {
+                        var base64 = Convert.ToBase64String(
+                            element.Certificate.Export(X509ContentType.Cert));
+                        sb.AppendLine("-----BEGIN CERTIFICATE-----");
+                        sb.AppendLine(base64);
+                        sb.AppendLine("-----END CERTIFICATE-----");
+                    }
+                    pem = sb.ToString();
+                    return true;
+                });
+            await ssl.AuthenticateAsClientAsync(host);
+            return pem;
+        }
+        
         /// <summary>
         /// Asynchronously initializes all framework modules and establishes connections to required services.
         /// Validates the API key, builds telemetry configuration, and sequentially initializes each module group.
         /// This method should be called before using any Inworld functionality.
         /// </summary>
-        public void InitializeAsync()
+        public async void InitializeAsync()
         {
             if (m_Telemetry)
                 m_Telemetry.Build();
+#if UNITY_IOS
+            string pemData = await FetchPemAsync("api-engine.inworld.ai");
+            InworldInterop.inworld_set_ssl_certificate(pemData);
+#endif
             if (string.IsNullOrEmpty(InworldFrameworkUtil.APIKey))
             {
                 Debug.LogError("Please input API key in Resources/InworldFramework");
@@ -267,6 +300,7 @@ namespace Inworld.Framework
                 if (!result)
                 {
                     Debug.LogError($"Module {module.GetType().Name} failed to initialize!");
+                    
                     // Todo: Shuang added
                     OnInitializedFailed?.Invoke($"{module.GetType().Name}");
                 }

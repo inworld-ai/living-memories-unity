@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Component: {fileID: 0}
   m_NodeName: AddCharacterSpeech
-  m_NodeType: 0
   m_CreationConfigAsset: {fileID: 0}
   m_InputTypes: []
   m_OutputType: 

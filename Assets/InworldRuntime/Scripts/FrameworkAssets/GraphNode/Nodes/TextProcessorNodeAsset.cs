@@ -12,6 +12,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: InworldText or InworldDataStream<string>
+    // Output: InworldDataStream<string>
+    
     /// <summary>
     /// Specialized node asset for text processing operations within graph workflows in the Inworld framework.
     /// Extends the custom node functionality to provide comprehensive text cleaning and filtering capabilities.
@@ -21,8 +24,6 @@ namespace Inworld.Framework.Graph
     /// This asset can be created through Unity's Create menu and used to sanitize and process text in conversation flows.
     /// </summary>
     // For Remove non-readable symbols and emojis.
-    // Input: InworldText or InworldDataStream<string>
-    // Output: InworldDataStream<string>
     [CreateAssetMenu(fileName = "Node_TextProcessor", menuName = "Inworld/Create Node/Text Operation/Text processor", order = -2498)]
 
     public class TextProcessorNodeAsset : CustomNodeAsset

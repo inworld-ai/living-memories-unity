@@ -9,7 +9,7 @@ namespace Inworld.Framework
         public CustomExecutionConfigWrapper(string typeID, bool needReportToClient, ConfigWrapperDestructor destructor)
         {
             m_DLLPtr = MemoryManager.Register(InworldInterop.inworld_CustomExecutionConfigWrapper_new(typeID,
-                GCHandle.ToIntPtr(GCHandle.Alloc(this, GCHandleType.Pinned)), needReportToClient, destructor.ToDLL), InworldInterop.inworld_CustomExecutionConfigWrapper_delete);
+                GCHandle.ToIntPtr(GCHandle.Alloc(this)), needReportToClient, destructor.ToDLL), InworldInterop.inworld_CustomExecutionConfigWrapper_delete);
         }
 
         public CustomExecutionConfigWrapper(IntPtr rhs)

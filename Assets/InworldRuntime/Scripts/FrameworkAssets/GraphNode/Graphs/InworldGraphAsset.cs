@@ -109,7 +109,6 @@ namespace Inworld.Framework.Graph
         protected Dictionary<string, bool> m_JsonNodeRegistry;
         protected Dictionary<(string, string), bool> m_JsonEdgeRegistry;
 
-        public virtual bool NeedSaveAsJson => false;
         public virtual bool NeedClearHistory => false;
         
         // YAN: A place for users to store their own data that's executing graph in the middle.
@@ -227,12 +226,14 @@ namespace Inworld.Framework.Graph
                 m_RuntimeGraph.Dispose();
                 m_RuntimeGraph = null;
             }
+            InworldComponentManager.Clear();
         }
 
         public virtual void ClearHistory()
         {
         }
 
+        public bool IsJsonInitialized => m_ParsedRoot != null;
         public bool IsJsonRegistered(InworldNodeAsset node) => m_JsonNodeRegistry != null &&
                                                                m_JsonNodeRegistry.ContainsKey(node.NodeName) &&
                                                                m_JsonNodeRegistry[node.NodeName];
@@ -463,8 +464,7 @@ namespace Inworld.Framework.Graph
                 Debug.LogError($"[InworldFramework] Graph compiled Failed.");
                 return false;
             }
-            if (InworldFrameworkUtil.IsDebugMode)
-                Debug.Log($"[InworldFramework] Graph compiled successfully with ID: {m_CompiledGraph.ID}");
+            Debug.Log($"[InworldFramework] Graph compiled successfully with ID: {m_CompiledGraph.ID}");
             return true;
         }
 
@@ -506,22 +506,14 @@ namespace Inworld.Framework.Graph
             m_Executor.Start();
             return true;
         }
-        
-        // Yan: This function needs to be optimized.
-        //      It's currently used in the json referenced classes. Do not call it in the regular one.
+
         public virtual bool InitializeRegistries()
         {
-            // TODO(Yan): Remove hardcode checking.
-            if (!InworldComponentManager.IsRegistered("LLMInterface"))
-            {
-                IntPtr status = InworldInterop.inworld_InitializeRegistries();
-                if (!InworldInterop.inworld_Status_ok(status))
-                {
-                    Debug.LogError(InworldInterop.inworld_Status_ToString(status));
-                    return false;
-                }
-            }
-            return true;
+            IntPtr status = InworldInterop.inworld_InitializeRegistries();
+            if (InworldInterop.inworld_Status_ok(status)) 
+                return true;
+            Debug.LogError(InworldInterop.inworld_Status_ToString(status));
+            return false;
         }
 
         public virtual bool LoadGameData()

@@ -80,20 +80,10 @@ namespace Inworld.Framework.Samples.Node
                 return;
             }
 
-            // InworldText text = new InworldText(m_InputField.text); 
-            // InsertBubble(m_BubbleRight, Role.User.ToString(), m_InputField.text);
-            // m_InputField.text = "";
-            // await m_InworldGraphExecutor.ExecuteGraphAsync("LLM",text);
-            
-            InworldVector<InworldMessage> messages = new InworldVector<InworldMessage>();
-            InworldMessage userMsg = new InworldMessage();
-            userMsg.Role = Role.User;
-            userMsg.Content = m_InputField.text;
+            InworldText text = new InworldText(m_InputField.text); 
+            InsertBubble(m_BubbleRight, Role.User.ToString(), m_InputField.text);
             m_InputField.text = "";
-            messages.Add(userMsg);
-            
-            LLMChatRequest req = new LLMChatRequest(messages);
-            await m_InworldGraphExecutor.ExecuteGraphAsync("LLM", req);
+            await m_InworldGraphExecutor.ExecuteGraphAsync("LLM",text);
         }
         
         protected virtual void InsertBubble(ChatBubble bubble, string speaker, string content, int index = -1)
@@ -101,7 +91,7 @@ namespace Inworld.Framework.Samples.Node
             if (index == -1 || index >= m_Bubbles.Count)
             {
                 ChatBubble outBubble = Instantiate(bubble, m_ContentAnchor);
-                outBubble.SetBubble(speaker, InworldFrameworkUtil.InworldIcon, content);
+                outBubble.SetBubble(speaker, InworldFrameworkUtil.PlayerIcon, content);
                 m_Bubbles.Add(outBubble);
             }
             else

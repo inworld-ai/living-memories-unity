@@ -4,13 +4,12 @@
  * Use of this source code is governed by the Inworld.ai Software Development Kit License Agreement
  * that can be found in the LICENSE.md file or at https://www.inworld.ai/sdk-license
  *************************************************************************************************/
-
-using System;
 using System.Collections.Generic;
+using Inworld.Framework.Attributes;
 using Inworld.Framework.TTS;
-using Inworld.Framework.Node;
 using UnityEngine;
 using Util = Inworld.Framework.InworldFrameworkUtil;
+
 
 namespace Inworld.Framework.Primitive
 {
@@ -19,6 +18,7 @@ namespace Inworld.Framework.Primitive
     /// Converts text input into synthesized speech audio using AI-powered voice synthesis.
     /// Supports both synchronous and asynchronous speech synthesis operations with customizable voice settings.
     /// </summary>
+    [ModelType("Remote", ExcludeTargets = new[] { "StandaloneWindows", "StandaloneWindows64" })]
     public class InworldTTSModule : InworldFrameworkModule
     {
         [SerializeField] AudioSource m_AudioSource;
@@ -108,12 +108,10 @@ namespace Inworld.Framework.Primitive
                 List<float> data = chunk.WaveForm?.ToList();
                 if (data != null && data.Count > 0)
                     result.AddRange(data);
-                await Awaitable.NextFrameAsync();
             }
             await Awaitable.MainThreadAsync();
             string output = $"SampleRate: {sampleRate} Sample Count: {result.Count}";
             NotifyTaskEnd(output);
-            Debug.Log(output);
             int sampleCount = result.Count;
             if (sampleRate == 0 || sampleCount == 0)
                 return;

@@ -60,7 +60,6 @@ namespace Inworld.Framework.Samples.Node
                 LLMSpeaks(response.Content.ToString());
             else
             {
-                // YAN: Currently the Streaming Mode is not working as the swig binding issues.
                 InworldDataStream<string> stream = new InworldDataStream<string>(obj);
                 if (stream.IsValid)
                 {

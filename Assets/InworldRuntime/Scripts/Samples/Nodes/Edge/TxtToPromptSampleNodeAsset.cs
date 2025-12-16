@@ -12,6 +12,12 @@ using UnityEngine;
 
 namespace Inworld.Framework.Samples.Node
 {
+    // Input: InworldText
+    // Output: LLMChatRequest
+    
+    // YAN: Very basic LLMConverter (without any template)
+    // which is directly converting InworldText to LLMChatRequest
+    
     /// <summary>
     /// Sample custom node asset that converts text inputs into LLM chat requests.
     /// Processes multiple text inputs by concatenating them and creating a user message for LLM interaction.

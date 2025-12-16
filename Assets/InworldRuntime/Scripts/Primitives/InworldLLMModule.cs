@@ -6,8 +6,8 @@
  *************************************************************************************************/
 
 using System;
+using Inworld.Framework.Attributes;
 using Inworld.Framework.LLM;
-using Inworld.Framework.Node;
 using Util = Inworld.Framework.InworldFrameworkUtil;
 using UnityEngine;
 
@@ -17,6 +17,7 @@ namespace Inworld.Framework.Primitive
     /// Module for Large Language Model (LLM) integration in the Inworld framework.
     /// Provides text generation capabilities using both remote and local AI models.
     /// </summary>
+    [ModelType("Remote", ExcludeTargets = new[] { "StandaloneWindows", "StandaloneWindows64" })]
     public class InworldLLMModule : InworldFrameworkModule
     {
         [Header("Remote:")] 
@@ -183,6 +184,7 @@ namespace Inworld.Framework.Primitive
 
         public async Awaitable<string> GenerateTextAsync(string text)
         {
+            Debug.Log($"Prompt: {text}");
             string result = "";
             if (!Initialized || !(m_Interface is LLMInterface llmInterface))
                 return result;
@@ -199,14 +201,15 @@ namespace Inworld.Framework.Primitive
                 return result;
             }
             NotifyTaskStart();
+            await Awaitable.BackgroundThreadAsync();
             while (m_InputStream != null && m_InputStream.HasNext)
             {
                 InworldContent content = m_InputStream.Read();
                 if (content != null && content.IsValid)
                     result += content.Content;
-                NotifyTask(result);
-                await Awaitable.NextFrameAsync();
             }
+            await Awaitable.MainThreadAsync();
+            NotifyTask(result);
             NotifyTaskEnd(text);
             Debug.Log(result);
             return result;

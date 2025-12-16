@@ -70,6 +70,8 @@ namespace Inworld.Framework.Editor
             textField.RegisterValueChangedCallback(evt => title = evt.newValue);
             mainContainer.Add(textField);
         }
+        
+        protected virtual void OnNodeAssetAssigned() {}
 
         void RegisterDoubleClickMethod()
         {
@@ -111,10 +113,9 @@ namespace Inworld.Framework.Editor
             {
                 textField.value = title;
             }
-
-            Debug.Log($"Set NodeName: {title}");
             SetColor();
             SetPosition(new Rect(nodeAsset.EditorPosition, GetPosition().size));
+            OnNodeAssetAssigned();
         }
 
         public virtual InworldNodeAsset SaveToAsset()
@@ -130,22 +131,6 @@ namespace Inworld.Framework.Editor
             return NodeAsset;
         }
         
-        public void UpdateNodeTitle()
-        {
-            string baseTitle = NodeAsset?.NodeName ?? "Node";
-            if (NodeAsset == GraphAsset.StartNode)
-            {
-                title = $"StartNode - {baseTitle}";
-            }
-            else if (GraphAsset.EndNodes.Contains(NodeAsset))
-            {
-                title = $"EndNode - {baseTitle}";
-            }
-            else
-            {
-                title = baseTitle;
-            }
-        }
         void SetupContextMenu()
         {
             this.AddManipulator(new ContextualMenuManipulator(evt =>

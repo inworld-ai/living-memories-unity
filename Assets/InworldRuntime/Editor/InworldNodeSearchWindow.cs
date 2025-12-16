@@ -141,7 +141,7 @@ namespace Inworld.Framework.Editor
                             return;
                         Type newType = TypeCache.GetTypesDerivedFrom<CustomNodeAsset>()
                             .FirstOrDefault(t => string.Equals(t.Name, createdClassName, StringComparison.Ordinal) ||
-                                                 string.Equals(t.FullName, createdClassName, StringComparison.Ordinal));
+                                                string.Equals(t.FullName, createdClassName, StringComparison.Ordinal));
                         if (newType != null)
                             CreateNodeOfTypeAt(newType, screenPos, m_PendingPort);
                     };
@@ -154,30 +154,27 @@ namespace Inworld.Framework.Editor
             if (nodeAssetType == null) 
                 return false;
             
-            // Create the node view
-            InworldNodeView node = m_GraphView.CreateNode(graphMousePosition);
-            
-            // Create and configure the node asset
+            // Create the node asset FIRST
             InworldNodeAsset nodeAsset = CreateInstance(nodeAssetType) as InworldNodeAsset;
+            InworldNodeView node = null;
             if (nodeAsset != null)
             {
                 // Set the node name based on its type
                 nodeAsset.NodeName = GetNodeTypeName(nodeAssetType);
-                
-                // Assign the asset to the node view
-                node.NodeAsset = nodeAsset;
-                node.GraphAsset = m_GraphView.GraphAsset;
-                
+
                 // Ensure required component asset exists for non-custom node types
                 EnsureRequiredComponent(nodeAssetType);
-                
-                // Auto-assign start/end node roles for the first two nodes
-                CheckAndAssignStartEndNode(node);
 
-                node.SetColor();
-                // Update the node's title display
-                node.UpdateNodeTitle();
+                // Keep the initial position set by mouse before LoadFromAsset applies it
+                nodeAsset.EditorPosition = graphMousePosition;
+
+                // Create the correct NodeView subclass and bind via LoadFromAsset (triggers OnNodeAssetAssigned)
+                node = m_GraphView.CreateNodeForAsset(nodeAsset, graphMousePosition);
+
+                // Auto-assign start/end node roles and update title
+                CheckAndAssignStartEndNode(node);
             }
+
             // If invoked from edge dragging, auto connect the new node
             if (m_PendingPort == null || node == null) 
                 return true;
@@ -200,7 +197,6 @@ namespace Inworld.Framework.Editor
             m_PendingPort = null;
             return true;
         }
-
         public void CreateNodeOfTypeAt(Type nodeAssetType, Vector2 screenPosition, Port fromPort = null)
         {
             if (nodeAssetType == null)
@@ -208,19 +204,24 @@ namespace Inworld.Framework.Editor
             Vector2 windowMousePosition = screenPosition - m_EditorWindow.position.position;
             Vector2 graphMousePosition = m_GraphView.contentViewContainer.WorldToLocal(windowMousePosition);
             
-            InworldNodeView node = m_GraphView.CreateNode(graphMousePosition);
+            // Create the node asset FIRST
             InworldNodeAsset nodeAsset = CreateInstance(nodeAssetType) as InworldNodeAsset;
+            InworldNodeView node = null;
             if (nodeAsset != null)
             {
                 nodeAsset.NodeName = GetNodeTypeName(nodeAssetType);
-                node.NodeAsset = nodeAsset;
-                node.GraphAsset = m_GraphView.GraphAsset;
                 // Skip EnsureRequiredComponent for custom nodes by design
                 if (nodeAssetType != typeof(CustomNodeAsset))
                     EnsureRequiredComponent(nodeAssetType);
+
+                // Keep the initial position set by mouse before LoadFromAsset applies it
+                nodeAsset.EditorPosition = graphMousePosition;
+
+                // Create correct NodeView subclass and bind
+                node = m_GraphView.CreateNodeForAsset(nodeAsset, graphMousePosition);
+
+                // Auto-assign start/end and update title
                 CheckAndAssignStartEndNode(node);
-                node.SetColor();
-                node.UpdateNodeTitle();
             }
 
             if (fromPort == null || node == null)

@@ -25,12 +25,14 @@ namespace Inworld.Framework.Node
         /// Note: Parameter order is different from EdgeConditionExecutor.
         /// </summary>
         /// <param name="func">The delegate function to execute for custom node processing.</param>
-        public CustomNodeProcessExecutor(ProcessBaseDataIODelegate func)
+        /// <param name="userData">The user data pointer passed back to the callback by the native DLL.</param>
+        public CustomNodeProcessExecutor(ProcessBaseDataIODelegate func, IntPtr userData)
         {
-            m_Self = GCHandle.Alloc(this, GCHandleType.Pinned);
+            m_Self = GCHandle.Alloc(this);
             m_Func = func;
             IntPtr funcPtr = Marshal.GetFunctionPointerForDelegate(func);
-            m_DLLPtr = MemoryManager.Register(InworldInterop.inworld_CustomNodeProcessExecutor_new(GCHandle.ToIntPtr(m_Self), funcPtr),
+            m_DLLPtr = MemoryManager.Register(
+                InworldInterop.inworld_CustomNodeProcessExecutor_new(userData, funcPtr),
                 InworldInterop.inworld_CustomNodeProcessExecutor_delete);
         }
         

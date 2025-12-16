@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: InworldText
+    // Output: MatchedIntents
     [CreateAssetMenu(fileName = "Node_Intent", menuName = "Inworld/Create Node/Intent", order = -2796)]
     public class IntentNodeAsset : InworldNodeAsset
     {

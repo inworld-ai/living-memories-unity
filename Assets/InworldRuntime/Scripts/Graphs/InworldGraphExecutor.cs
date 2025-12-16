@@ -39,7 +39,7 @@ namespace Inworld.Framework.Graph
 
         // Runtime result buffering to avoid main-thread blocking and spikes
         readonly ConcurrentQueue<InworldBaseData> m_ResultQueue = new ConcurrentQueue<InworldBaseData>();
-        CancellationTokenSource m_ExecutionCts;
+
         
         // Events
         /// <summary>
@@ -235,7 +235,11 @@ namespace Inworld.Framework.Graph
                 return false;
             }
         }
-        
+        /// <summary>
+        /// Called to invoke the Graph's Execute API, if this executor instance is set to stream.
+        /// </summary>
+        /// <param name="executionId">An identifier for the execution call invoked. </param>
+        /// <param name="inputData">Input data handle passed from ExecuteGraphAsync</param>
         async Awaitable ExecuteGraphStream(string executionId, InworldBaseData inputData)
         {
             if (!m_Graph || m_Graph.Executor == null)
@@ -249,21 +253,20 @@ namespace Inworld.Framework.Graph
             // consume them on main thread in LateUpdate to avoid spikes.
             ExecutionResult handle = m_Graph.Executor.Execute(inputData, executionId);
             InworldInputStream<InworldBaseData> stream = handle.ResultStream;
-            m_ExecutionCts?.Cancel();
-            m_ExecutionCts = new CancellationTokenSource();
-            CancellationToken token = m_ExecutionCts.Token;
-            await Task.Run(() =>
+            await Awaitable.BackgroundThreadAsync();
+            while (stream.HasNext)
             {
-                while (!token.IsCancellationRequested && stream.HasNext)
-                {
-                    InworldBaseData result = stream.Read();
-                    if (result != null)
-                        m_ResultQueue.Enqueue(result);
-                }
-            }, token);
-            await Awaitable.NextFrameAsync(token);
+                InworldBaseData result = stream.Read();
+                if (result != null)
+                    m_ResultQueue.Enqueue(result);
+            }
+            await Awaitable.MainThreadAsync();
         }
-
+        /// <summary>
+        /// Called to invoke the Graph's Execute API, if this executor instance is set to non-stream.
+        /// </summary>
+        /// <param name="executionId">An identifier for the execution call invoked. </param>
+        /// <param name="inputData">Input data handle passed from ExecuteGraphAsync</param>
         async Awaitable ExecuteGraphSimplified(string executionId, InworldBaseData inputData)
         {
             if (!m_Graph || m_Graph.Executor == null)
@@ -275,19 +278,14 @@ namespace Inworld.Framework.Graph
             }
             ExecutorInterface executor = m_Graph.Executor;
             int handle = executor.ExecuteSimplified(inputData, executionId);
-            m_ExecutionCts?.Cancel();
-            m_ExecutionCts = new CancellationTokenSource();
-            CancellationToken token = m_ExecutionCts.Token;
-            await Task.Run(() =>
+            await Awaitable.BackgroundThreadAsync();
+            while (executor.HasMoreResults(handle))
             {
-                while (!token.IsCancellationRequested && executor.HasMoreResults(handle))
-                {
-                    InworldBaseData result = executor.GetNextResult(handle);
-                    if (result != null)
-                        m_ResultQueue.Enqueue(result);
-                }
-            }, token);
-            await Awaitable.NextFrameAsync(token);
+                InworldBaseData result = executor.GetNextResult(handle);
+                if (result != null)
+                    m_ResultQueue.Enqueue(result);
+            }
+            await Awaitable.MainThreadAsync();
         }
         
         /// <summary>
@@ -300,7 +298,6 @@ namespace Inworld.Framework.Graph
                 return;
                 
             m_IsExecuting = false;
-            try { m_ExecutionCts?.Cancel(); } catch { }
             m_Graph.Executor.CloseAllExecutions();
             OnGraphFinished?.Invoke(Graph);
             Debug.Log($"[InworldFramework] Graph '{m_Graph.name}' execution stopped");
@@ -327,7 +324,6 @@ namespace Inworld.Framework.Graph
                 Error = k_ErrGraphNull;
                 return;
             }
-            m_ExecutionCts?.Cancel();
             if (m_Graph.NeedClearHistory)
                 m_Graph.ClearHistory(); 
             m_Graph.ClearGraphRuntime();

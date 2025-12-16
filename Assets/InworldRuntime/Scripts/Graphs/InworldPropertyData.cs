@@ -6,9 +6,4 @@ namespace Inworld.Framework.Graph
     {
         
     }
-    
-    public abstract class ExecutionConfigPropData
-    {
-        
-    }
 }

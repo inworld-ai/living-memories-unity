@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: InworldAudio
+    // Output: InworldText
+    
     /// <summary>
     /// Specialized node asset for Speech-to-Text (STT) operations within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide speech recognition and audio-to-text conversion capabilities.

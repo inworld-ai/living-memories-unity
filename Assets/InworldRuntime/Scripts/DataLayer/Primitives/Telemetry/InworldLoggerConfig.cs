@@ -14,7 +14,7 @@ namespace Inworld.Framework.Telemetry
     /// Defines log levels, output settings, and integration with external logging systems.
     /// Used for configuring how the system generates and manages log output for debugging and monitoring.
     /// </summary>
-    public class InworldLoggerConfig : InworldFrameworkDllClass
+    public class InworldLoggerConfig : InworldConfig
     {
         /// <summary>
         /// Initializes a new instance of the InworldLoggerConfig class with default settings.

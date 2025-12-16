@@ -22,7 +22,7 @@ MonoBehaviour:
     sinkAbslLogs: 1
     telemetryKey: SmVSbnZpbDN2bmExdExlQVpNZGxSbHVGWmNEUE9IRUU6Y2JtSGp2dDI1TU1vdjdyVDRnYWlHdmVYcE5ySnB4NkdUZHV3dXpQOTRoZk5rRm5CdDdJekRtU0h6U0dWUkpqcQ==
   m_APIKey: OHVmeUM3ZFUzUXZrSDhPNm5sdmR6VHc3eFp4SDczeTY6WG1ZYWJ6VmlMdkFmSGl6R2FZRHN6REhzRjd6UjVlc2M5SUVKcExIWk5id2lTeEE0QngzSUNhVDBZQVM3a2NFaQ==
-  m_LLMModelPath: llm/Meta-Llama-3.1-8B-Instruct-Q8_0.gguf
+  m_LLMModelPath: llm
   m_TextEmbedderPath: embedders/bge-large-en-v1.5_fp32.gguf
   m_SafetyWeightPath: safety/model_weights.json
   m_STTModelPath: stt/ggml-base.en.bin
@@ -33,3 +33,4 @@ MonoBehaviour:
   m_InworldIcon: {fileID: 2800000, guid: 7b91e150932621d4f92bc275c69eaf94, type: 3}
   m_DefaultPlayerIcon: {fileID: 2800000, guid: 2f2ad2a87cf90074f9f8b67461eb11e5, type: 3}
   m_PlayerName: Player
+  m_DebugMode: 0

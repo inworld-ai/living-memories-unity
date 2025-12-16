@@ -14,7 +14,7 @@ namespace Inworld.Framework.Telemetry
     /// Manages telemetry data collection, logging, tracing, and export configuration.
     /// Used for configuring observability and monitoring capabilities for the Inworld system.
     /// </summary>
-    public class InworldTelemetryConfig : InworldFrameworkDllClass
+    public class InworldTelemetryConfig : InworldConfig
     {
         /// <summary>
         /// Initializes a new instance of the InworldTelemetryConfig class with default settings.

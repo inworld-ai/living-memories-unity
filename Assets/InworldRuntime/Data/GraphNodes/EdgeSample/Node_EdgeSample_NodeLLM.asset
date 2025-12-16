@@ -12,16 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 494fb8075b6547ecbe0ac1a0489ebb9a, type: 3}
   m_Name: Node_EdgeSample_NodeLLM
   m_EditorClassIdentifier: 
+  m_Component: {fileID: 0}
   m_NodeName: EdgeSampleLLM
-  m_NodeType: 0
   m_CreationConfigAsset: {fileID: 0}
   m_InputTypes: []
   m_OutputType: 
-  m_BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
-  m_EditorPosition: {x: 0, y: 0}
+  m_BackgroundColor: {r: 0.25, g: 0.45, b: 0.95, a: 1}
+  m_EditorPosition: {x: 617.3333, y: 291.33334}
   m_Graph: {fileID: 0}
   m_ParentNodes: []
   m_ChildrenNodes: []
+  m_ExeConfigData:
+    type: 
+    properties:
+      llmComponentID: 
+      stream: 0
   m_Stream: 0
   m_MaxTokens: 100
   m_Temperature: 0.7

@@ -7,11 +7,16 @@
 
 using System;
 using System.Collections.Generic;
+using AOT;
+using System.Runtime.InteropServices;
 using Inworld.Framework.Node;
 using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: Any InworldBaseData (Based on your design)
+    // Output: Any InworldBaseData (Based on your design)
+    
     /// <summary>
     /// Specialized node asset for custom processing operations within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide customizable data processing capabilities.
@@ -36,6 +41,10 @@ namespace Inworld.Framework.Graph
         /// Handles the execution context and data flow for custom processing logic.
         /// </summary>
         CustomNodeProcessExecutor m_Executor;
+        GCHandle m_SelfHandle;
+        bool m_HandleAllocated;
+
+        static readonly ProcessBaseDataIODelegate s_StaticProcessDelegate = StaticProcessBaseDataIO;
         
         /// <summary>
         /// Creates the runtime representation of this custom node within the specified graph.
@@ -47,7 +56,7 @@ namespace Inworld.Framework.Graph
         public override bool CreateRuntime(InworldGraphAsset graphAsset)
         {
             m_Graph = graphAsset;
-            m_Executor = new CustomNodeProcessExecutor(ProcessBaseDataIO);
+            m_Executor = new CustomNodeProcessExecutor(s_StaticProcessDelegate, GetUserDataPtr());
             Runtime = new CustomNodeWrapper(NodeName, m_Executor);
             return Runtime?.IsValid ?? false;
         }
@@ -97,33 +106,78 @@ namespace Inworld.Framework.Graph
                 }
             }
         }
-        
+
+        [MonoPInvokeCallback(typeof(ProcessBaseDataIODelegate))]
+        static void StaticProcessBaseDataIO(IntPtr contextPtr)
+        {
+            if (contextPtr == IntPtr.Zero)
+                return;
+            CustomNodeAsset asset = null;
+            try
+            {
+                GCHandle handle = GCHandle.FromIntPtr(contextPtr);
+                asset = handle.Target as CustomNodeAsset;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[InworldFramework] CustomNodeAsset StaticProcessBaseDataIO GCHandle error: {ex.Message}");
+                return;
+            }
+
+            asset?.ProcessBaseDataIO(IntPtr.Zero);
+        }
+        [MonoPInvokeCallback(typeof(ProcessBaseDataIODelegateExecutionID))]
+        static void ThreadedCreateCallback(IntPtr ctxPtr, int threadID)
+        {
+            string nodeId = CustomNodeThreadedCreateExecutor.GetInputID(threadID);
+            CustomNodeThreadedCreateExecutor.GetInputCreationContext(threadID);
+            NodeExecutionConfig execCfg =
+                CustomNodeThreadedCreateExecutor.GetInputExecutionConfig(threadID) ??
+                new NodeExecutionConfig();
+
+            if (!s_NodeIdToAsset.TryGetValue(nodeId, out CustomNodeAsset asset) || asset == null)
+            {
+                Debug.LogError($"[InworldFramework] No CustomNodeAsset found for nodeId: {nodeId}");
+                return;
+            }
+
+            InworldVector<CustomConfigWrapper> extraConfigs =
+                CustomNodeThreadedCreateExecutor.GetInputConfigs(threadID);
+            if (extraConfigs != null && !extraConfigs.IsEmpty)
+            {
+                // TODO: Process the incoming data.
+            }
+
+            CustomNodeProcessExecutor processExec =
+                new CustomNodeProcessExecutor(s_StaticProcessDelegate, asset.GetUserDataPtr());
+            CustomNodeWrapper wrapper = new CustomNodeWrapper(nodeId, processExec, execCfg);
+            CustomNodeThreadedCreateExecutor.SetOutput(threadID, wrapper);
+        }
+
+        IntPtr GetUserDataPtr()
+        {
+            if (!m_HandleAllocated || !m_SelfHandle.IsAllocated)
+            {
+                m_SelfHandle = GCHandle.Alloc(this);
+                m_HandleAllocated = true;
+            }
+            return GCHandle.ToIntPtr(m_SelfHandle);
+        }
+
+        void OnDisable()
+        {
+            if (m_HandleAllocated && m_SelfHandle.IsAllocated)
+            {
+                m_SelfHandle.Free();
+                m_HandleAllocated = false;
+            }
+        }
+
         protected virtual void RegisterCustomNode()
         {
             if (s_RegisteredTypes.Contains(NodeTypeName))
                 return;
-            CustomNodeThreadedCreateExecutor createExec = new CustomNodeThreadedCreateExecutor(
-                (IntPtr ctxPtr, int threadID) =>
-                {
-                    string nodeId = CustomNodeThreadedCreateExecutor.GetInputID(threadID);
-                    InworldCreationContext a = CustomNodeThreadedCreateExecutor.GetInputCreationContext(threadID);
-                    NodeExecutionConfig execCfg = CustomNodeThreadedCreateExecutor.GetInputExecutionConfig(threadID) ??
-                                                  new NodeExecutionConfig();
-
-                    if (!s_NodeIdToAsset.TryGetValue(nodeId, out CustomNodeAsset asset) || asset == null)
-                    {
-                        Debug.LogError($"[InworldFramework] No CustomNodeAsset found for nodeId: {nodeId}, type: {NodeTypeName}");
-                        asset = this; 
-                    }
-                    InworldVector<CustomConfigWrapper> extraConfigs = CustomNodeThreadedCreateExecutor.GetInputConfigs(threadID);
-                    if (extraConfigs != null && !extraConfigs.IsEmpty)
-                    {
-                        // TODO: Process the incoming data.
-                    }
-                    CustomNodeProcessExecutor processExec = new CustomNodeProcessExecutor(asset.ProcessBaseDataIO);
-                    CustomNodeWrapper wrapper = new CustomNodeWrapper(nodeId, processExec, execCfg);
-                    CustomNodeThreadedCreateExecutor.SetOutput(threadID, wrapper);
-                });
+            CustomNodeThreadedCreateExecutor createExec = new CustomNodeThreadedCreateExecutor(ThreadedCreateCallback);
             InworldComponentManager.RegisterCustomNode(NodeTypeName, createExec);
         }
 

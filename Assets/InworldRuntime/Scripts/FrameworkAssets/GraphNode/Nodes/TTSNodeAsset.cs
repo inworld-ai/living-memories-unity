@@ -12,6 +12,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: InworldText
+    // Output: InworldDataStream<TTSOutput>
+    
     /// <summary>
     /// Specialized node asset for Text-to-Speech (TTS) operations within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide speech synthesis and text-to-audio conversion capabilities.

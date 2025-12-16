@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Graph
 {
+    // Input: Not related
+    // Output: InworldText
+    
     /// <summary>
     /// Specialized node asset for random canned text generation within graph workflows in the Inworld framework.
     /// Extends the base node functionality to provide predefined text selection and randomization capabilities.

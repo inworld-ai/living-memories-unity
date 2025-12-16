@@ -29,6 +29,12 @@ namespace Inworld.Framework
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void ProcessBaseDataIODelegate(IntPtr contextPtr);
     
+    /// <summary>
+    /// Delegate for processing base data I/O operations that include an execution identifier.
+    /// Used when native callbacks need to distinguish between different execution contexts.
+    /// </summary>
+    /// <param name="contextPtr">Pointer to the native context object containing processing data.</param>
+    /// <param name="executionId">The execution identifier associated with this callback invocation.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void ProcessBaseDataIODelegateExecutionID(IntPtr contextPtr, int executionId);
     
@@ -49,6 +55,12 @@ namespace Inworld.Framework
     /// </summary>
     public class InworldFrameworkUtil : ScriptableObject
     {
+#if UNITY_IOS && !UNITY_EDITOR
+    internal const string k_Inworld = "__Internal";
+#else
+        internal const string k_Inworld = "inworld";
+#endif
+        
         [SerializeField] InworldTelemetry m_TelemetryConfig;
         [SerializeField] string m_APIKey;
         [Space(10)][Header("Local Model Path:")][Header("(Relative to StreamingAssets folder)")]
@@ -248,10 +260,10 @@ namespace Inworld.Framework
         
         static void UnregisterLogger() => UnregisterExternalLogListener(LogListener);
         
-        [DllImport("inworld", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(k_Inworld, CallingConvention = CallingConvention.Cdecl)]
         static extern void RegisterExternalLogListener(InworldExternalLogListener log_listener);
         
-        [DllImport("inworld", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(k_Inworld, CallingConvention = CallingConvention.Cdecl)]
         static extern void UnregisterExternalLogListener(InworldExternalLogListener log_listener);
         
         [MonoPInvokeCallback(typeof(InworldExternalLogListener))]
@@ -390,7 +402,6 @@ namespace Inworld.Framework
             string strResult = InworldInterop.inworld_Status_ToString(status);
             if (checkerFunction(executeFuncResult))
             {
-                Debug.Log(strResult);
                 return valueFunction(executeFuncResult);
             }
             Debug.LogError(strResult);

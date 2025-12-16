@@ -44,5 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cdff8fe01ae42f4b0f06dadfa72ae23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModelType: 1
-  m_APIKey: ZDVEUHdYSVZQeVl1NzVnZDR3dDVTVXF0Zk5IZ0NuRnA6YXRlMkFYazZ5OVRZUjVCVmFLaE1Ja0FVaGQzd1J5ZFM1U3A0NzVta3BDSnVVZWt4RURzeDRGOEloaHFhYU5mbQ==
+  m_ModelType: 0

@@ -561,9 +561,6 @@ MonoBehaviour:
   m_LoadingProcesses:
   - modules:
     - {fileID: 1016540144}
-    - {fileID: 1420915650}
-  - modules:
-    - {fileID: 718337620}
   m_Telemetry: {fileID: 0}
   m_AutoStart: 1
   m_VerboseLog: 0
@@ -581,8 +578,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1016540145}
-  - {fileID: 718337619}
-  - {fileID: 1420915649}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &689088587
@@ -619,7 +614,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -777.5828}
+  m_AnchoredPosition: {x: 0, y: -609.39374}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &689088589
@@ -662,57 +657,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1 &718337618
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 718337619}
-  - component: {fileID: 718337620}
-  m_Layer: 0
-  m_Name: SafetyChecker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &718337619
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 718337618}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 406615234}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &718337620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 718337618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e045c3fe583c45fcbb3c5d16c9b94bba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ModelType: 0
-  m_SafetyData:
-  - topic: 3
-    threshold: 0.3
-  m_Provider: 
-  m_ModelName: 
-  m_ModelPath: 
 --- !u!1 &736285918
 GameObject:
   m_ObjectHideFlags: 0
@@ -1125,7 +1069,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53cc2c17147d477fb96fb3fb9e9f6114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModelType: 1
+  m_ModelType: 0
+  m_RemoteProvider: inworld
+  m_RemoteModelName: BAAI/bge-large-en-v1.5
 --- !u!4 &1016540145
 Transform:
   m_ObjectHideFlags: 0
@@ -1745,61 +1691,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1221176956}
   m_CullTransparentMesh: 1
---- !u!1 &1420915648
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1420915649}
-  - component: {fileID: 1420915650}
-  m_Layer: 0
-  m_Name: LLM
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1420915649
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420915648}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 406615234}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1420915650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420915648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee91004a7b3d43efba58230e7739e4bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ModelType: 0
-  m_Provider: inworld
-  m_ModelName: inworld-dragon
-  m_ModelPath: 
-  m_MaxToken: 100
-  m_MaxPromptLength: 1000
-  m_TopP: 0.95
-  m_Temperature: 0.5
-  m_Repetition: 1
-  m_Frequency: 0
-  m_Presence: 0
 --- !u!1 &1477205820
 GameObject:
   m_ObjectHideFlags: 0

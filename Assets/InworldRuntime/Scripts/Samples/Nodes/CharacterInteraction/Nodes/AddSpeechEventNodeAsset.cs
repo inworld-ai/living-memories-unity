@@ -13,6 +13,9 @@ using UnityEngine;
 
 namespace Inworld.Framework.Samples.Node
 {
+    // Input: InworldText or SafetyResult or LLMChatResponse or InworldDataStream<TTSOutput>
+    // Output: InworldText or InworldError
+    
     /// <summary>
     /// Custom node asset for adding speech events to character conversation history.
     /// Processes various input data types (safety results, TTS output, LLM responses, text) and

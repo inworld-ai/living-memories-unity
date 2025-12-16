@@ -123,6 +123,10 @@ namespace Inworld.Framework.Audio
             }
         }
         public bool IsMicRecording => GetUniqueModule<IMicrophoneHandler>()?.IsMicRecording ?? false;
+        /// <summary>
+        /// Start microphone handling. 
+        /// </summary>
+        /// <returns>False if there's no active Microphone Handler. True otherwise.</returns>
         public bool StartMicrophone()
         {
             IMicrophoneHandler micHandler = GetModule<IMicrophoneHandler>();
@@ -133,6 +137,10 @@ namespace Inworld.Framework.Audio
             return true;
         }
 
+        /// <summary>
+        /// Start microphone handling. 
+        /// </summary>
+        /// <returns>False if there's no active Microphone Handler. True otherwise.</returns>
         public bool StopMicrophone()
         {
             IMicrophoneHandler micHandler = GetModule<IMicrophoneHandler>();
@@ -143,6 +151,10 @@ namespace Inworld.Framework.Audio
             return true;
         }
 
+        /// <summary>
+        /// Should be called after the handler setup buffers and clips for data.
+        /// This function will kickstart the coroutine to collect audio, which gets constantly sent to the handler
+        /// </summary>
         public void StartAudioThread()
         {
             if (m_AudioCoroutine != null) 
@@ -151,6 +163,9 @@ namespace Inworld.Framework.Audio
             StartCoroutine(m_AudioCoroutine);
         }
 
+        /// <summary>
+        /// Stop the audio coroutine for audio collection. Note that this function does not touch the buffers (more like pause than stop)
+        /// </summary>
         public void StopAudioThread()
         {
             if (m_AudioCoroutine == null) 
@@ -158,12 +173,17 @@ namespace Inworld.Framework.Audio
             StopCoroutine(m_AudioCoroutine);
             m_AudioCoroutine = null;
         }
+        // Below are functions that operates on all audio modules
+        
         public void ResetPointer() => GetUniqueModule<ICollectAudioHandler>()?.ResetPointer();
+        public void CollectAudio() => GetModules<ICollectAudioHandler>().ForEach(module => module.OnCollectAudio());
+        
         public void StartVoiceDetecting() => GetUniqueModule<IPlayerAudioEventHandler>()?.StartVoiceDetecting();
         public void StopVoiceDetecting() => GetUniqueModule<IPlayerAudioEventHandler>()?.StopVoiceDetecting();
+        
         public void StartCalibrate() => GetModules<ICalibrateAudioHandler>().ForEach(module => module.OnStartCalibration());
         public void StopCalibrate() => GetModules<ICalibrateAudioHandler>().ForEach(module => module.OnStopCalibration());
-        public void CollectAudio() => GetModules<ICollectAudioHandler>().ForEach(module => module.OnCollectAudio());
+        
         public void PreProcess() => GetModules<IProcessAudioHandler>().ForEach(module => module.OnPreProcessAudio());
         public void PostProcess() => GetModules<IProcessAudioHandler>().ForEach(module => module.OnPostProcessAudio());
 

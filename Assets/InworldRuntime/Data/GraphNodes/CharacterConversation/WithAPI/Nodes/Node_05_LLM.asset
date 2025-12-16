@@ -14,12 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Component: {fileID: 0}
   m_NodeName: LLM
-  m_NodeType: 0
   m_CreationConfigAsset: {fileID: 0}
   m_InputTypes: []
   m_OutputType: 
   m_BackgroundColor: {r: 0.25, g: 0.45, b: 0.95, a: 1}
-  m_EditorPosition: {x: 730, y: 266}
+  m_EditorPosition: {x: 744, y: 266}
   m_Graph: {fileID: 11400000, guid: 3b8f365fb8b6d9843812b314df30ee23, type: 2}
   m_ParentNodes:
   - {fileID: 11400000, guid: 272e04ff76895c34fa20541408f3a9ad, type: 2}

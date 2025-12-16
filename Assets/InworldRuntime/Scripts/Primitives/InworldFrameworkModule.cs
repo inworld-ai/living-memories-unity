@@ -6,9 +6,11 @@
  *************************************************************************************************/
 
 using System;
+using System.IO;
 using Inworld.Framework.Graph;
 using Inworld.Framework.Node;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Inworld.Framework.Primitive
 {
@@ -193,6 +195,36 @@ namespace Inworld.Framework.Primitive
             return Initialized;
         }
         
+        protected virtual async Awaitable MoveAssetsToDiskAsync()
+        {
+            string srcPath = Path.Combine(Application.streamingAssetsPath, InworldFrameworkUtil.SafetyWeightPath);
+            string dstPath = Path.Combine(Application.persistentDataPath, InworldFrameworkUtil.SafetyWeightPath);
+
+            if (File.Exists(dstPath))
+                return; 
+
+            using (var req = UnityWebRequest.Get(srcPath))
+            {
+                await req.SendWebRequest();
+
+#if UNITY_2020_2_OR_NEWER
+                if (req.result != UnityWebRequest.Result.Success)
+#else
+                if (req.isNetworkError || req.isHttpError)
+#endif
+                {
+                    Debug.LogError($"Failed to load safety model from StreamingAssets: {req.error}\nPath: {srcPath}");
+                    return;
+                }
+                if (!Directory.Exists(Application.persistentDataPath))
+                    Directory.CreateDirectory(Application.persistentDataPath);
+                if (!Directory.Exists(Application.persistentDataPath + "/safety"))
+                    Directory.CreateDirectory(Application.persistentDataPath+ "/safety");
+                File.WriteAllBytes(dstPath, req.downloadHandler.data);
+                Debug.Log($"Safety model written to: {dstPath}");
+            }
+        }
+        
         /// <summary>
         /// Initializes the module asynchronously by creating factory, configuration, and interface.
         /// Performs interface creation on a background thread for improved performance.
@@ -214,6 +246,9 @@ namespace Inworld.Framework.Primitive
                 m_Config.Dispose();
                 m_Config = null;
             }
+#if UNITY_ANDROID
+            await MoveAssetsToDiskAsync();
+#endif
             m_Config = SetupConfig(); 
             if (m_Config == null)
             {

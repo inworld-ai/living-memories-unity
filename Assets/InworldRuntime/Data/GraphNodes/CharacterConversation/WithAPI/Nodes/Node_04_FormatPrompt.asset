@@ -18,7 +18,7 @@ MonoBehaviour:
   m_InputTypes: []
   m_OutputType: 
   m_BackgroundColor: {r: 0, g: 0, b: 0, a: 0}
-  m_EditorPosition: {x: 450, y: 266}
+  m_EditorPosition: {x: 450.66666, y: 266}
   m_Graph: {fileID: 11400000, guid: 3b8f365fb8b6d9843812b314df30ee23, type: 2}
   m_ParentNodes:
   - {fileID: 11400000, guid: 27277115d50f39345824a1a2b860903c, type: 2}

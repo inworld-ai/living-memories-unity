@@ -7,6 +7,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using AOT;
 using Inworld.Framework.Edge;
 using Inworld.Framework.Node;
 using UnityEngine;
@@ -266,6 +267,7 @@ namespace Inworld.Framework.Graph
         /// Handles the evaluation of edge conditions during graph execution.
         /// </summary>
         /// <param name="data">Pointer to the edge asset data for condition evaluation.</param>
+        [MonoPInvokeCallback(typeof(ProcessBaseDataIODelegate))]
         static void OnConditionCheck(IntPtr data)
         {
             InworldEdgeAsset edgeAsset = GCHandle.FromIntPtr(data).Target as InworldEdgeAsset;

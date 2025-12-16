@@ -139,7 +139,7 @@ namespace Inworld.Framework.Editor
         
         static string GetTemplate(string className)
         {
-            return "using Inworld.Framework;" +
+            return "using Inworld.Framework;\n" +
                    "using Inworld.Framework.Graph;\n" +
                    "using UnityEngine;\n\n" +
                    "// Create custom node inherit from CustomNodeAsset。\n" +
