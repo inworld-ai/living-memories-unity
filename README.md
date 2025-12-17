@@ -89,7 +89,7 @@ cd LivingMemories
 When you first open the project, a **Dependency Downloader** window will appear automatically. If not, open it via:
 
 ```
-Unity Menu Bar > Window > Inworld > Dependency Downloader
+Unity Menu Bar > Inworld > Check DLL and Models
 ```
 
 ![Dependency Downloader](docs/images/dependency-downloader.png)
@@ -262,7 +262,7 @@ LivingMemories/
 ### Common Issues
 
 **"Missing Plugins or StreamingAssets"**
-- Open `Window > Inworld > Dependency Downloader`
+- Open `Unity Menu Bar > Inworld > Check DLL and Models`
 - Download the required dependencies
 - If auto-download fails, manually download from URLs in console
 
