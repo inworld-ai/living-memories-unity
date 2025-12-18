@@ -84,7 +84,12 @@ public class FlowController_Lipsync : NodeTemplate
     {
         // Initialize page states
         if (LoadingPage != null) LoadingPage.SetActive(true);
-        if (ConnectGroup != null) ConnectGroup.interactable = true;
+        if (ConnectGroup != null)
+        {
+            ConnectGroup.interactable = true; 
+            if(setup != null && setup.GetComponentInChildren<TMP_Text>() != null)
+                setup.GetComponentInChildren<TMP_Text>().text = "Connect";
+        }
         if (GenerationPage != null) GenerationPage.interactable = false;
         if (resultPage != null) resultPage.SetActive(false);
 
@@ -239,7 +244,12 @@ public class FlowController_Lipsync : NodeTemplate
             !string.IsNullOrEmpty(InworldController.TTS.Voice.SpeakerID))
         {
             // Move to generation page
-            if (ConnectGroup != null) ConnectGroup.interactable = false;
+            if (ConnectGroup != null)
+            {
+                ConnectGroup.interactable = false; 
+                if(setup != null && setup.GetComponentInChildren<TMP_Text>() != null)
+                    setup.GetComponentInChildren<TMP_Text>().text = "Connected";
+            }
             if (GenerationPage != null) GenerationPage.interactable = true;
 
             Debug.Log("Inworld AI initialized successfully.");
